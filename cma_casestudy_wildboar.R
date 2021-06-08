@@ -9,6 +9,8 @@ library(sf) # encoding spatial vector data
 library(ggmap)
 library(maps)
 library(mapdata)
+library(suncalc)
+library(rgdal)
 
 # Getting the data from the package
 Wildschwein_BE <- wildschwein_BE # Why only data from BE? Should we only focus on the schrecks from there? 
@@ -19,16 +21,17 @@ Schrecklocation <- schreck_locations
 
 # Joining Schreckagenda with Schreckagenda with a left join
 Schrecklocation <- left_join(Schrecklocation, Schreckagenda, by = "id")
+Schrecklocation$jagddruck <- factor(Schrecklocation$jagddruck, levels =c("gering", "mittel", "hoch"))
 
 Schrecklocation_sf <- st_as_sf(Schrecklocation, 
-                               coords = c("N", "E"),
+                               coords = c("lon", "lat"),
                                crs = 4326)
-
-Schrecklocation_sf$jagddruck <- factor(Schrecklocation$jagddruck, levels =c("gering", "mittel", "hoch"))
-
-# Filtering locations, so only Schrecklocations of Canton of Bern is in the data
+st_crs(Schrecklocation_sf)
+# Filtering locations, so only Schrecklocations of Canton of Bern (fanel & hagneck) is in the data
 Schrecklocation_sf <- Schrecklocation_sf %>%
-  filter(region == "fanel" | region == "hagneck" | region == "cheyres")
+  filter(region == "fanel" | region == "hagneck")
+
+Schrecklocation_sf <- st_transform(Schrecklocation_sf, 2056)
 
 # Getting map of bern
 #get_map(location = c(-122.080954, 36.971709), maptype = "terrain", source = "osm", zoom = 14)
@@ -61,21 +64,6 @@ ggplot(Schrecklocation_cheyres, aes(shape = jagddruck)) +
   geom_sf(alpha = 0.4) +
   scale_shape_manual(values = c("gering" = 15, "mittel" = 16, "hoch" = 17))
 
-# Setting column day/night to Wildbaor data
-
-# Add a date column (with whatever timezone you want)
-Wildschwein_BE$date <- as.Date(Wildschwein_BE$DatetimeUTC, tz = 'UTC')
-
-# Following generates the sunrise and sunset times for the two example dates
-#sunRise <- c(as.POSIXct('2016-04-15 06:40:37'), as.POSIXct('2016-03-24 06:55:00'))
-#sunSet <- c(as.POSIXct('2016-04-15 18:40:37'), as.POSIXct('2016-03-24 18:25:00'))
-#sun <- data.frame(date = as.Date(sunRise, tz = 'EST'), sunRise = sunRise, sunSet = sunSet)
-
-# Join the two tables and compute night/day
-#df <- inner_join(df, sun)
-#df$dayNight <- ifelse(df$DateTime > df$sunRise & df$DateTime < df$sunSet, 'day', 'night')
-
-
 
 # Plotting for presentation
 wildschwein_BE <- wildschwein_BE %>%
@@ -98,6 +86,33 @@ WB_Ueli <- Wildschwein_BE_sf %>%
 
 ggplot() +
   geom_sf(data = WB_Ueli, alpha = 0.2) +
+  geom_line(data = WB_Ueli, aes(geometry [1], geometry [2])) +
   geom_sf(data = Pres_schreckloc, alpha = 0.4, colour = "red", shape = 17, size = 3) +
   coord_sf(xlim = c(7.05, 7.07), ylim = c(46.99, 47.00), crs = 4326)
+
+# Setting column day/night to Wildbaor data
+
+# Add a date column (with whatever timezone you want)
+
+change_crs <- data.frame(lat = Wildschwein_BE$E, lon = Wildschwein_BE$N)
+Wildschwein_BE$date <- as.Date(Wildschwein_BE$DatetimeUTC, tz = 'UTC')
+
+
+getSunlightTimes(date = "2014-05-28", 
+                 lat = 2570390, 
+                 lon = 1204820,
+                 keep = c("sunrise", "sunset"), tz = "UTC")
+class(Wildschwein_BE$date)
+
+# Following generates the sunrise and sunset times for the two example dates
+#sunRise <- c(as.POSIXct('2016-04-15 06:40:37'), as.POSIXct('2016-03-24 06:55:00'))
+#sunSet <- c(as.POSIXct('2016-04-15 18:40:37'), as.POSIXct('2016-03-24 18:25:00'))
+#sun <- data.frame(date = as.Date(sunRise, tz = 'EST'), sunRise = sunRise, sunSet = sunSet)
+
+# Join the two tables and compute night/day
+#df <- inner_join(df, sun)
+#df$dayNight <- ifelse(df$DateTime > df$sunRise & df$DateTime < df$sunSet, 'day', 'night')
+
+
+
 
