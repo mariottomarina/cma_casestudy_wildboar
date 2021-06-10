@@ -65,15 +65,85 @@ coords_sep_BE <- as.data.frame(st_coordinates(BE_sf))
 Wildschwein_BE$lon <- coords_sep_BE$X
 Wildschwein_BE$lat <- coords_sep_BE$Y
 
+# generating dataframes with single data point for each day of timespan for schrecks
+dur_schreck <- function(datum_on, datum_off){ 
+  difftime(datum_on, datum_off,  units = "days")
+}
+
+Schrecklocation <- Schrecklocation %>%
+  group_by(id) %>%
+  mutate(duration = dur_schreck(datum_off,datum_on) )
+Schrecklocation$duration <- as.integer(Schrecklocation$duration)  # unit days
+
+seq_dates <- function(data, datum_on, datum_off, i){
+    dates <- seq(as.Date(datum_on [i]), as.Date(datum_off [i]), by="days")
+    df1 <- data.frame(dates)
+    df1$id <- data$id [i]
+    df1$lat <- data$lat [i]
+    df1$lon <- data$lon [i]
+    print(df1)
+    return(df1)
+  }
+
+Loc1 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=1)
+Loc2 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=2)
+Loc3 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=3)
+Loc4 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=4)
+Loc5 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=5)
+Loc6 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=6)
+Loc7 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=7)
+Loc8 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=8)
+Loc9 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=9)
+Loc10 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=10)
+Loc11 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=11)
+Loc12 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=12)
+Loc13 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=13)
+Loc14 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=14)
+Loc15 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=15)
+Loc16 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=16)
+Loc17 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=17)
+Loc18 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=18)
+Loc19 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=19)
+Loc20 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=20)
+Loc21 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=21)
+
+
 # calculating sunset and sunrise
 
-getSunlightTimes(date = Wildschwein_BE$date, 
-                                    lat = Wildschwein_BE$lat, 
-                                    lon = Wildschwein_BE$lon,
-                                    keep = c("sunrise", "sunset"), 
-                                    tz = "UTC")
+sun <- function(data) {
+for (i in 1:nrow(data)){
+  suntimes <- getSunlightTimes(date = data$dates [i], 
+                               lat = data$lat [i], 
+                               lon = data$lon [i],
+                               keep = c("sunrise", "sunset"),
+                               tz = "UTC")
+  data$sunrise [i] <- as.POSIXct(suntimes [,4], format = "%Y-%m-%d %H:%M:%S")
+  data$sunset [i] <- suntimes [,5]
+  print(suntimes)
+}
+  print(data)
+}
 
 
-
-
+sun_1 <- sun(Loc1)
+sun_2 <- sun(Loc2)
+sun_3 <- sun(Loc3)
+sun_4 <- sun(Loc4)
+sun_5 <- sun(Loc5)
+sun_6 <- sun(Loc6)
+sun_7 <- sun(Loc7)
+sun_8 <- sun(Loc8)
+sun_9 <- sun(Loc9)
+sun_10 <- sun(Loc10)
+sun_11 <- sun(Loc11)
+sun_12 <- sun(Loc12)
+sun_13 <- sun(Loc13)
+sun_14 <- sun(Loc14)
+sun_15 <- sun(Loc15)
+sun_16 <- sun(Loc16)
+sun_17 <- sun(Loc17)
+sun_18 <- sun(Loc18)
+sun_19 <- sun(Loc19)
+sun_20 <- sun(Loc20)
+sun_21 <- sun(Loc21)
 
