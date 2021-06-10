@@ -107,9 +107,9 @@ Loc19 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$da
 Loc20 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=20)
 Loc21 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$datum_off, i=21)
 
+Locations_adapted <- rbind(Loc1, Loc2, Loc3, Loc4, Loc5, Loc6, Loc7, Loc8, Loc9, Loc10, Loc11, Loc12, Loc13, Loc14, Loc15, Loc16, Loc17, Loc18, Loc19, Loc20, Loc21)
 
-# calculating sunset and sunrise
-
+# calculating sunset and sunrise for Schrecklocations
 sun <- function(data) {
 for (i in 1:nrow(data)){
   suntimes <- getSunlightTimes(date = data$dates [i], 
@@ -117,33 +117,13 @@ for (i in 1:nrow(data)){
                                lon = data$lon [i],
                                keep = c("sunrise", "sunset"),
                                tz = "UTC")
-  data$sunrise [i] <- as.POSIXct(suntimes [,4], format = "%Y-%m-%d %H:%M:%S")
-  data$sunset [i] <- suntimes [,5]
-  print(suntimes)
+  data$sunrise [i] <- suntimes$sunrise
+  data$sunset  [i] <- suntimes$sunset
+  data$sunrise <- as.POSIXct(data$sunrise, origin="1970-01-01")
+  data$sunset  <-  as.POSIXct(data$sunset, origin="1970-01-01")
 }
   print(data)
 }
 
-
-sun_1 <- sun(Loc1)
-sun_2 <- sun(Loc2)
-sun_3 <- sun(Loc3)
-sun_4 <- sun(Loc4)
-sun_5 <- sun(Loc5)
-sun_6 <- sun(Loc6)
-sun_7 <- sun(Loc7)
-sun_8 <- sun(Loc8)
-sun_9 <- sun(Loc9)
-sun_10 <- sun(Loc10)
-sun_11 <- sun(Loc11)
-sun_12 <- sun(Loc12)
-sun_13 <- sun(Loc13)
-sun_14 <- sun(Loc14)
-sun_15 <- sun(Loc15)
-sun_16 <- sun(Loc16)
-sun_17 <- sun(Loc17)
-sun_18 <- sun(Loc18)
-sun_19 <- sun(Loc19)
-sun_20 <- sun(Loc20)
-sun_21 <- sun(Loc21)
+Loc_adap_suntimes <- sun(Locations_adapted)
 
