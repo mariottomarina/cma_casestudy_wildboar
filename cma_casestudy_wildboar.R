@@ -11,6 +11,7 @@ library(maps)
 library(mapdata)
 library(suncalc)
 library(rgdal)
+library(spatialrisk)
 
 # Getting the data from the package
 Wildschwein_BE <- wildschwein_BE # Why only data from BE? Should we only focus on the schrecks from there? 
@@ -124,6 +125,36 @@ for (i in 1:nrow(data)){
 }
   print(data)
 }
-
 Loc_adap_suntimes <- sun(Locations_adapted)
 
+# drawing buffer around Wildschweinschrecks
+joined_schreck <- left_join(Loc_adap_suntimes, Schrecklocation, by = )
+
+joined_schreck_sf <- st_as_sf(Schrecklocation,                    # Making SF Object
+                              coords = c("lon", "lat"),
+                              crs = 4326)
+joined_schreck_sf <- st_transform(joined_schreck_sf, 2056)        # Transforming coordinate system. st_buffer doesn't like to work with lat lon. 
+
+  # buffer of X Meter around each Schreck
+buffer_schreck_agenda <- st_buffer(joined_schreck_sf, dist = 100) # 100 Meter radius.
+
+# Making sf object out of Wildschwein data again
+BE_sf_circle <- st_as_sf(Wildschwein_BE, 
+                         coords = c("E", "N"),
+                          crs = 2056)
+
+
+filtered_WSS_2014_04 <- filter(Schrecklocation, id == "WSS_2014_04")
+filtered_Gaby <- filter(Wildschwein_BE, TierName == "Gaby")
+
+st_contains(filtered_WSS_2014_04$geometry, filtered_Gaby$geometry, spares = TRUE)
+
+keep <- function(data1, data2) {
+  for (i in 1:nrow(data1)){
+    for (j in 1:nrow(data2)){
+    data2$keep [j] <- st_contains(data1$geometry [i], data2$geometry [j], sparse = FALSE)
+    }}
+  }
+keep(buffer_schreck_agenda, BE_sf_circle)
+
+keep <- points_in_circle(filtered_Gaby, filtered_WSS_2014_04$lon [1], filtered_WSS_2014_04$lat[1], radius = 100)
