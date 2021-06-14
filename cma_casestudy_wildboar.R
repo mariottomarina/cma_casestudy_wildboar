@@ -12,6 +12,7 @@ library(mapdata)
 library(suncalc)
 library(rgdal)
 library(spatialrisk)
+library(purrr)
 
 # Getting the data from the package
 Wildschwein_BE <- wildschwein_BE # Why only data from BE? Should we only focus on the schrecks from there? 
@@ -116,19 +117,19 @@ for (i in 1:nrow(data)){
   suntimes <- getSunlightTimes(date = data$dates [i], 
                                lat = data$lat [i], 
                                lon = data$lon [i],
-                               keep = c("sunrise", "sunset"),
+                               keep = c("dusk", "dawn"),
                                tz = "UTC")
-  data$sunrise [i] <- suntimes$sunrise
-  data$sunset  [i] <- suntimes$sunset
-  data$sunrise <- as.POSIXct(data$sunrise, origin="1970-01-01")
-  data$sunset  <-  as.POSIXct(data$sunset, origin="1970-01-01")
+  data$dusk [i] <- suntimes$dusk
+  data$dawn  [i] <- suntimes$dawn
+  data$dusk <- as.POSIXct(data$dusk, origin="1970-01-01")
+  data$dawn  <-  as.POSIXct(data$dawn, origin="1970-01-01")
 }
   print(data)
 }
 Loc_adap_suntimes <- sun(Locations_adapted)
 
 # drawing buffer around Wildschweinschrecks
-joined_schreck <- left_join(Loc_adap_suntimes, Schrecklocation, by = )
+joined_schreck <- left_join(Loc_adap_suntimes, Schrecklocation)
 
 joined_schreck_sf <- st_as_sf(Schrecklocation,                    # Making SF Object
                               coords = c("lon", "lat"),
@@ -136,7 +137,25 @@ joined_schreck_sf <- st_as_sf(Schrecklocation,                    # Making SF Ob
 joined_schreck_sf <- st_transform(joined_schreck_sf, 2056)        # Transforming coordinate system. st_buffer doesn't like to work with lat lon. 
 
   # buffer of X Meter around each Schreck
-buffer_schreck_agenda <- st_buffer(joined_schreck_sf, dist = 100) # 100 Meter radius.
+
+distance <- function(data1, data2) {
+  dis <- data.frame(IDSchreck = character(),
+                    TierName = character(),
+                    DateTimeUTC = POSIXct(),
+                    distance = numeric())
+  for (i in 1:nrow(data1)) {
+    for (j in 1:nrow(data2)) {
+      distance <- sqrt((data1$E [i] - data2$E [j])^2 + (data1$N [i] - data2$N [j])^2)
+      new_vec <- c(IDSchreck = data1$id [i], TierName = data2$TierName [j], DateTimeUTC = data2$DateTimeUTC [j], distance =distance)
+      rbind(dis, new_vec)
+  }}
+}
+
+distance(Schrecklocation, Wildschwein_BE)
+
+distance <- sqrt((Schrecklocation$E [1] - Wildschwein_BE$E [1])^2 + (Schrecklocation$N [1] - Wildschwein_BE$N [1])^2 )
+
+buffer_schreck_agenda <- st_buffer(joined_schreck_sf, dist = 100) # 1500 Meter radius.
 
 # Making sf object out of Wildschwein data again
 BE_sf_circle <- st_as_sf(Wildschwein_BE, 
