@@ -136,44 +136,79 @@ joined_schreck_sf <- st_as_sf(Schrecklocation,                    # Making SF Ob
                               crs = 4326)
 joined_schreck_sf <- st_transform(joined_schreck_sf, 2056)        # Transforming coordinate system. st_buffer doesn't like to work with lat lon. 
 
-  # buffer of X Meter around each Schreck
+  # creating seperat column for the year, so we can filter that
+Wildschwein_BE$year <- format(as.Date(Wildschwein_BE$DatetimeUTC, format = "%Y-%m-%d"),"%Y")
+Schrecklocation$year <- format(as.Date(Schrecklocation$datum_on, format = "%Y-%m-%d"),"%Y")
+
+# Filtering Wildschein Data depending on the year
+Wildschwein_BE_14 <- Wildschwein_BE %>%
+  filter(year == "2014")
+Wildschwein_BE_15 <- Wildschwein_BE %>%
+  filter(year == "2015")
+Wildschwein_BE_16 <- Wildschwein_BE %>%
+  filter(year == "2016")
+
+# Filtering Schrecklocation depending on the year.
+Schreckslocation_14 <- Schrecklocation %>%
+  filter(year == "2014")
+
+Schreckslocation_15 <- Schrecklocation %>%
+  filter(year == "2015")
+Schreckslocation_15_1 <- Schreckslocation_15 [1:2,]
+Schreckslocation_15_3 <- Schreckslocation_15 [3,]
+Schreckslocation_15_4 <- Schreckslocation_15 [4,]
+
+
+Schreckslocation_16 <- Schrecklocation %>%
+  filter(year == "2016")
+Schreckslocation_16_1 <- Schreckslocation_16 [1,]
+Schreckslocation_16_2 <- Schreckslocation_16 [2,]
+Schreckslocation_16_3 <- Schreckslocation_16 [3,]
+Schreckslocation_16_4 <- Schreckslocation_16 [4,]
+
+
+# Function to calculate the euclidean distance between the Schreck and the boar
+library(compiler)
+enableJIT(3)
 
 distance <- function(data1, data2) {
   dis <- data.frame(IDSchreck = character(),
                     TierName = character(),
-                    DateTimeUTC = POSIXct(),
+                    DateTimeUTC = character(),
                     distance = numeric())
+  z <- 1
   for (i in 1:nrow(data1)) {
     for (j in 1:nrow(data2)) {
       distance <- sqrt((data1$E [i] - data2$E [j])^2 + (data1$N [i] - data2$N [j])^2)
-      new_vec <- c(IDSchreck = data1$id [i], TierName = data2$TierName [j], DateTimeUTC = data2$DateTimeUTC [j], distance =distance)
-      rbind(dis, new_vec)
-  }}
+      new_vec <- c(data1$id [i], data2$TierName [j], data2$DatetimeUTC [j], distance)
+      dis [z, ] <- new_vec
+      z <- z+1
+      print(j)
+    }
+    print(i)
+    print("i")
+  }
+  distance_wildboar_schreck <<- dis
 }
 
-distance(Schrecklocation, Wildschwein_BE)
+# execute the function
+distance_14 <- distance(Schreckslocation_14, Wildschwein_BE_14)
+distance_15_3_33 <- distance(Schreckslocation_15_3, Wildschwein_BE_15)
+distance_15_4_44 <- distance(Schreckslocation_15_4, Wildschwein_BE_15)
+distance_16_1 <- distance(Schreckslocation_16_1, Wildschwein_BE_16)
+distance_16_2 <- distance(Schreckslocation_16_2, Wildschwein_BE_16)
+distance_16_3 <- distance(Schreckslocation_16_3, Wildschwein_BE_16)
+distance_16_4 <- distance(Schreckslocation_16_4, Wildschwein_BE_16)
 
-distance <- sqrt((Schrecklocation$E [1] - Wildschwein_BE$E [1])^2 + (Schrecklocation$N [1] - Wildschwein_BE$N [1])^2 )
+# combining files
+distance_15 <- rbind(distance_15_1, distance_15_3_33, distance_15_4_44, distance_15_3)
+distance_16 <- rbind(distance_16_1, distance_16_2, distance_16_3, distance_16_4)
 
-buffer_schreck_agenda <- st_buffer(joined_schreck_sf, dist = 100) # 1500 Meter radius.
+# saving distance files as csv
+write.csv(distance_14, "P:/03_ZHAW_MSc/12_Patterns and Trends in Environmental Data/Semesterproject/cma_casestudy_wildboar/distance_14.csv", row.names = FALSE)
+write.csv(distance_15, "P:/03_ZHAW_MSc/12_Patterns and Trends in Environmental Data/Semesterproject/cma_casestudy_wildboar/distance_15.csv", row.names = FALSE)
+write.csv(distance_16, "P:/03_ZHAW_MSc/12_Patterns and Trends in Environmental Data/Semesterproject/cma_casestudy_wildboar/distance_16.csv", row.names = FALSE)
 
-# Making sf object out of Wildschwein data again
-BE_sf_circle <- st_as_sf(Wildschwein_BE, 
-                         coords = c("E", "N"),
-                          crs = 2056)
+# Remove rows with distance > 1500 m
 
 
-filtered_WSS_2014_04 <- filter(Schrecklocation, id == "WSS_2014_04")
-filtered_Gaby <- filter(Wildschwein_BE, TierName == "Gaby")
-
-st_contains(filtered_WSS_2014_04$geometry, filtered_Gaby$geometry, spares = TRUE)
-
-keep <- function(data1, data2) {
-  for (i in 1:nrow(data1)){
-    for (j in 1:nrow(data2)){
-    data2$keep [j] <- st_contains(data1$geometry [i], data2$geometry [j], sparse = FALSE)
-    }}
-  }
-keep(buffer_schreck_agenda, BE_sf_circle)
-
-keep <- points_in_circle(filtered_Gaby, filtered_WSS_2014_04$lon [1], filtered_WSS_2014_04$lat[1], radius = 100)
