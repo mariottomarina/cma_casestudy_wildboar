@@ -111,21 +111,22 @@ Loc21 <- seq_dates(Schrecklocation, Schrecklocation$datum_on, Schrecklocation$da
 
 Locations_adapted <- rbind(Loc1, Loc2, Loc3, Loc4, Loc5, Loc6, Loc7, Loc8, Loc9, Loc10, Loc11, Loc12, Loc13, Loc14, Loc15, Loc16, Loc17, Loc18, Loc19, Loc20, Loc21)
 
-# calculating sunset and sunrise for Schrecklocations
+# function for calculating dusk and dawn for Schrecklocations
 sun <- function(data) {
-for (i in 1:nrow(data)){
-  suntimes <- getSunlightTimes(date = data$dates [i], 
-                               lat = data$lat [i], 
-                               lon = data$lon [i],
-                               keep = c("dusk", "dawn"),
-                               tz = "UTC")
-  data$dusk [i] <- suntimes$dusk
-  data$dawn  [i] <- suntimes$dawn
-  data$dusk <- as.POSIXct(data$dusk, origin="1970-01-01")
-  data$dawn  <-  as.POSIXct(data$dawn, origin="1970-01-01")
-}
+  for (i in 1:nrow(data)){
+    suntimes <- getSunlightTimes(date = data$dates [i], 
+                                 lat = data$lat [i], 
+                                 lon = data$lon [i],
+                                 keep = c("dusk", "dawn"),
+                                 tz = "UTC")
+    data$dusk [i] <- suntimes$dusk
+    data$dawn  [i] <- suntimes$dawn
+    data$dusk <- as.POSIXct(data$dusk, origin="1970-01-01")
+    data$dawn  <-  as.POSIXct(data$dawn, origin="1970-01-01")
+  }
   print(data)
 }
+
 Loc_adap_suntimes <- sun(Locations_adapted)
 
 # drawing buffer around Wildschweinschrecks
@@ -209,6 +210,63 @@ write.csv(distance_14, "P:/03_ZHAW_MSc/12_Patterns and Trends in Environmental D
 write.csv(distance_15, "P:/03_ZHAW_MSc/12_Patterns and Trends in Environmental Data/Semesterproject/cma_casestudy_wildboar/distance_15.csv", row.names = FALSE)
 write.csv(distance_16, "P:/03_ZHAW_MSc/12_Patterns and Trends in Environmental Data/Semesterproject/cma_casestudy_wildboar/distance_16.csv", row.names = FALSE)
 
-# Remove rows with distance > 1500 m
+# Load Distance files
+distance_14 <- read_delim("distance_14.csv", ",")
+distance_15 <- read_delim("distance_15.csv", ",")
+distance_16 <- read_delim("distance_16.csv", ",")
 
+distance_14$DateTimeUTC <- as.POSIXct(distance_14$DateTimeUTC, origin = "1970-01-01")
+distance_15$DateTimeUTC <- as.POSIXct(distance_15$DateTimeUTC, origin = "1970-01-01")
+distance_16$DateTimeUTC <- as.POSIXct(distance_16$DateTimeUTC, origin = "1970-01-01")
 
+# rwmoving all data with distance higher than 1500
+distance_14 <- distance_14 %>%
+  filter(distance < 1500)
+distance_15 <- distance_15 %>%
+  filter(distance < 1500)
+distance_16 <- distance_15 %>%
+  filter(distance < 1500)
+
+# year 2014
+WSS_2014_04 <- distance_14 %>%
+  filter(IDSchreck == "WSS_2014_04" & DateTimeUTC > Schrecklocation$datum_on [1] & DateTimeUTC < Schrecklocation$datum_off [1])
+WSS_2014_05 <- distance_14 %>%
+  filter(IDSchreck == "WSS_2014_05" & DateTimeUTC > Schrecklocation$datum_on [2] & DateTimeUTC < Schrecklocation$datum_off [2])
+WSS_2014_06_s <- distance_14 %>%
+  filter(IDSchreck == "WSS_2014_06"  & DateTimeUTC > Schrecklocation$datum_on [3] & DateTimeUTC < Schrecklocation$datum_off [3])  # delete
+WSS_2014_06_a <- distance_14 %>%
+  filter(IDSchreck == "WSS_2014_06"  & DateTimeUTC > Schrecklocation$datum_on [4] & DateTimeUTC < Schrecklocation$datum_off [4])  # delete
+
+# year 2015
+WSS_2015_01_s <- distance_15 %>%
+  filter(IDSchreck == "WSS_2015_01"  & DateTimeUTC > Schrecklocation$datum_on [5] & DateTimeUTC < Schrecklocation$datum_off [5])
+WSS_2015_01_a <- distance_15 %>%
+  filter(IDSchreck == "WSS_2015_01"  & DateTimeUTC > Schrecklocation$datum_on [6] & DateTimeUTC < Schrecklocation$datum_off [6])
+WSS_2015_03_s <- distance_15 %>%
+  filter(IDSchreck == "WSS_2015_03"  & DateTimeUTC > Schrecklocation$datum_on [7] & DateTimeUTC < Schrecklocation$datum_off [7])
+WSS_2015_03_a <- distance_15 %>%
+  filter(IDSchreck == "WSS_2015_03"  & DateTimeUTC > Schrecklocation$datum_on [8] & DateTimeUTC < Schrecklocation$datum_off [8])
+WSS_2015_04 <- distance_15 %>%
+  filter(IDSchreck == "WSS_2015_04"  & DateTimeUTC > Schrecklocation$datum_on [9] & DateTimeUTC < Schrecklocation$datum_off [10])
+
+# year 2016
+WSS_2016_01 <- distance_16 %>%
+  filter(IDSchreck == "WSS_2016_01"  & DateTimeUTC > Schrecklocation$datum_on [11] & DateTimeUTC < Schrecklocation$datum_off [11])  # delete
+WSS_2016_05 <- distance_16 %>%
+  filter(IDSchreck == "WSS_2016_05"  & DateTimeUTC > Schrecklocation$datum_on [12] & DateTimeUTC < Schrecklocation$datum_off [12])  # delete
+WSS_2016_06 <- distance_16 %>%
+  filter(IDSchreck == "WSS_2016_06"  & DateTimeUTC > Schrecklocation$datum_on [13] & DateTimeUTC < Schrecklocation$datum_off [13])  # delete
+WSS_2016_13 <- distance_16 %>%
+  filter(IDSchreck == "WSS_2016_13"  & DateTimeUTC > Schrecklocation$datum_on [14] & DateTimeUTC < Schrecklocation$datum_off [14])  # delete
+
+# adding data from other dataframes to this file
+# WSS 2014_04
+WSS_2014_04$Schreck.N <- Schrecklocation$N [1]
+WSS_2014_04$Schreck.E <- Schrecklocation$E [1]
+WSS_2014_04$Schreck.lat <- Schrecklocation$lat[1]
+WSS_2014_04$Schreck.lon <- Schrecklocation$lon [1]
+WSS_2014_04 <- left_join(WSS_2014_04, Wildschwein_BE_14, by = c("TierName" = "TierName", "DateTimeUTC" = "DatetimeUTC"))
+WSS_2014_04 <- left_join(WSS_2014_04, Loc_adap_suntimes, by = c("date" = "dates", "IDSchreck" = "id", "Schreck.lat" = "lat", "Schreck.lon" = "lon"))
+WSS_2014_04 <- WSS_2014_04 %>% 
+  rowwise() %>%
+  mutate(daynight = ifelse(between(DateTimeUTC, dawn, dusk), "day", "night"))

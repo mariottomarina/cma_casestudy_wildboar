@@ -1,7 +1,49 @@
 ---
-title: "Wildboar Analysis"
-author: "Marina & Melina"
+title: "Wild boar movement: Analysis of scare off measures"
+author: "Marina Mariotto & Melina Oldorf"
 date: "14 6 2021"
 output: html_document
 ---
+## Introduction 
+Agricultural crops provide an optimal and easily accessible food source for wild boar (Sus scrofa). Therefore, wild boar can cause damage of crop fields, which leads to financial damage. Since the damage of these fields caused conflicts with farmers, scare-off measures were developed, implemented, and monitored. This study aims to analyse, with the program R, the statistical success rate of the scare-off measures. 
+
+### Research questions
+
+## Data and Methods
+
+### Data
+The data was collected within the scope of a project 
+
+
+### Pre-processing 
+calculated times for dawn and dusk for every day each Schreck was running
+calculated distance of wild boar to scare off measures
+
+### Methods
+
+
+### Limitations
+
+
+
+## Results
+```{r, echo = FALSE}
+library(readr)        # to import tabular data (e.g. csv)
+library(dplyr)        # to manipulate (tabular) data
+library(ggplot2)      # to visualize data
+library(lubridate)    # To handle dates and times
+devtools::install_github("ComputationalMovementAnalysis/ComputationalMovementAnalysisData") # getting data from R Package
+library(ComputationalMovementAnalysisData) #Wild boar data is on that package
+library(sf) # encoding spatial vector data 
+library(ggmap)
+library(maps)
+library(mapdata)
+library(suncalc)
+library(rgdal)
+library(spatialrisk)
+library(purrr)
+```
+
+
+## Discussion
 
