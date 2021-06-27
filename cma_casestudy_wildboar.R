@@ -13,6 +13,7 @@ library(suncalc)
 library(rgdal)
 library(spatialrisk)
 library(purrr)
+library(circle)
 
 # Getting the data from the package
 Wildschwein_BE <- wildschwein_BE # Why only data from BE? Should we only focus on the schrecks from there? 
@@ -220,44 +221,57 @@ distance_15$DateTimeUTC <- as.POSIXct(distance_15$DateTimeUTC, origin = "1970-01
 distance_16$DateTimeUTC <- as.POSIXct(distance_16$DateTimeUTC, origin = "1970-01-01")
 
 # rwmoving all data with distance higher than 1500
-distance_14 <- distance_14 %>%
+distance_14_fl <- distance_14 %>%
   filter(distance < 1500)
-distance_15 <- distance_15 %>%
+distance_15_fl <- distance_15 %>%
   filter(distance < 1500)
-distance_16 <- distance_15 %>%
+distance_16_fl <- distance_15 %>%
   filter(distance < 1500)
 
 # year 2014
-WSS_2014_04 <- distance_14 %>%
+WSS_2014_04 <- distance_14_fl %>%
   filter(IDSchreck == "WSS_2014_04" & DateTimeUTC > Schrecklocation$datum_on [1] & DateTimeUTC < Schrecklocation$datum_off [1])
-WSS_2014_05 <- distance_14 %>%
+WSS_2014_05 <- distance_14_fl %>%
   filter(IDSchreck == "WSS_2014_05" & DateTimeUTC > Schrecklocation$datum_on [2] & DateTimeUTC < Schrecklocation$datum_off [2])
-WSS_2014_06_s <- distance_14 %>%
+WSS_2014_06_s <- distance_14_fl %>%
   filter(IDSchreck == "WSS_2014_06"  & DateTimeUTC > Schrecklocation$datum_on [3] & DateTimeUTC < Schrecklocation$datum_off [3])  # delete
-WSS_2014_06_a <- distance_14 %>%
+WSS_2014_06_a <- distance_14_fl %>%
   filter(IDSchreck == "WSS_2014_06"  & DateTimeUTC > Schrecklocation$datum_on [4] & DateTimeUTC < Schrecklocation$datum_off [4])  # delete
 
 # year 2015
-WSS_2015_01_s <- distance_15 %>%
+WSS_2015_01_s <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_01"  & DateTimeUTC > Schrecklocation$datum_on [5] & DateTimeUTC < Schrecklocation$datum_off [5])
-WSS_2015_01_a <- distance_15 %>%
+WSS_2015_01_a <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_01"  & DateTimeUTC > Schrecklocation$datum_on [6] & DateTimeUTC < Schrecklocation$datum_off [6])
-WSS_2015_03_s <- distance_15 %>%
+WSS_2015_03_s <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_03"  & DateTimeUTC > Schrecklocation$datum_on [7] & DateTimeUTC < Schrecklocation$datum_off [7])
-WSS_2015_03_a <- distance_15 %>%
+WSS_2015_03_a <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_03"  & DateTimeUTC > Schrecklocation$datum_on [8] & DateTimeUTC < Schrecklocation$datum_off [8])
-WSS_2015_04 <- distance_15 %>%
+WSS_2015_04 <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_04"  & DateTimeUTC > Schrecklocation$datum_on [9] & DateTimeUTC < Schrecklocation$datum_off [10])
 
 # year 2016
-WSS_2016_01 <- distance_16 %>%
+WSS_2016_01 <- distance_16_fl %>%
   filter(IDSchreck == "WSS_2016_01"  & DateTimeUTC > Schrecklocation$datum_on [11] & DateTimeUTC < Schrecklocation$datum_off [11])  # delete
-WSS_2016_05 <- distance_16 %>%
+WSS_2016_05 <- distance_16_fl %>%
   filter(IDSchreck == "WSS_2016_05"  & DateTimeUTC > Schrecklocation$datum_on [12] & DateTimeUTC < Schrecklocation$datum_off [12])  # delete
-WSS_2016_06 <- distance_16 %>%
+WSS_2016_06 <- distance_16_fl %>%
   filter(IDSchreck == "WSS_2016_06"  & DateTimeUTC > Schrecklocation$datum_on [13] & DateTimeUTC < Schrecklocation$datum_off [13])  # delete
-WSS_2016_13 <- distance_16 %>%
+WSS_2016_13 <- distance_16_fl %>%
   filter(IDSchreck == "WSS_2016_13"  & DateTimeUTC > Schrecklocation$datum_on [14] & DateTimeUTC < Schrecklocation$datum_off [14])  # delete
+
+
+# keep working with
+WSS_2014_04
+WSS_2014_05
+WSS_2015_01_s
+WSS_2015_01_a
+WSS_2015_03_s
+WSS_2015_03_a
+WSS_2015_04
+
+# Toss the rest because the distance of the wildboar to the schrecks is out of reach of the schreck
+
 
 # adding data from other dataframes to this file
 # WSS 2014_04
@@ -267,6 +281,37 @@ WSS_2014_04$Schreck.lat <- Schrecklocation$lat[1]
 WSS_2014_04$Schreck.lon <- Schrecklocation$lon [1]
 WSS_2014_04 <- left_join(WSS_2014_04, Wildschwein_BE_14, by = c("TierName" = "TierName", "DateTimeUTC" = "DatetimeUTC"))
 WSS_2014_04 <- left_join(WSS_2014_04, Loc_adap_suntimes, by = c("date" = "dates", "IDSchreck" = "id", "Schreck.lat" = "lat", "Schreck.lon" = "lon"))
+# Calculating Timelag
+WSS_2014_04 <-WSS_2014_04 %>%
+  group_by(TierID) %>%
+  mutate(timelag = as.integer(difftime(lead(DateTimeUTC),DateTimeUTC, units = "secs")))
+# Calculating steplength 
+WSS_2014_04 <- WSS_2014_04 %>%
+  group_by(TierID) %>%
+  mutate(steplength = sqrt((E- lead(E,1))^2 + (N -lead(N,1))^2))
+# Calculating speed
 WSS_2014_04 <- WSS_2014_04 %>% 
-  rowwise() %>%
-  mutate(daynight = ifelse(between(DateTimeUTC, dawn, dusk), "day", "night"))
+  group_by(TierID) %>%
+  mutate(speed = (steplength/timelag) *3.6)
+WSS_2014_04$TierName <- as.factor(WSS_2014_04$TierName)
+levels(WSS_2014_04$TierName)
+# Filtering for individuals to plot the data
+WSS_2014_04_Caroline <- WSS_2014_04 %>%
+  filter(TierName == "Caroline")
+WSS_2014_04_Isabelle <- WSS_2014_04 %>%
+  filter(TierName == "Isabelle")
+WSS_2014_04_Nicole <- WSS_2014_04 %>%
+  filter(TierName == "Nicole")
+WSS_2014_04_Sabine <- WSS_2014_04 %>%
+  filter(TierName == "Sabine")
+WSS_2014_04_Ueli <- WSS_2014_04 %>%
+  filter(TierName == "Ueli")
+
+# Creating Plot of every individual
+ggplot() +
+  geom_point(data = WSS_2014_04_Caroline, aes(x= E, y=N)) +
+  geom_path(data = WSS_2014_04_Caroline, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(5)) +
+  geom_point(data = WSS_2014_04_Caroline, aes(x=Schreck.E, y=Schreck.N), colour = "red") +
+  geom_circle
+
