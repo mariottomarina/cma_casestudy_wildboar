@@ -14,6 +14,7 @@ library(rgdal)
 library(spatialrisk)
 library(purrr)
 library(circle)
+library(ggforce)
 
 # Getting the data from the package
 Wildschwein_BE <- wildschwein_BE # Why only data from BE? Should we only focus on the schrecks from there? 
@@ -281,6 +282,10 @@ WSS_2014_04$Schreck.lat <- Schrecklocation$lat[1]
 WSS_2014_04$Schreck.lon <- Schrecklocation$lon [1]
 WSS_2014_04 <- left_join(WSS_2014_04, Wildschwein_BE_14, by = c("TierName" = "TierName", "DateTimeUTC" = "DatetimeUTC"))
 WSS_2014_04 <- left_join(WSS_2014_04, Loc_adap_suntimes, by = c("date" = "dates", "IDSchreck" = "id", "Schreck.lat" = "lat", "Schreck.lon" = "lon"))
+WSS_2014_04$dusk <- with_tz(WSS_2014_04$dusk, "UTC")
+WSS_2014_04$dawn <- with_tz(WSS_2014_04$dawn, "UTC")
+WSS_2014_04$daynight <- ifelse(WSS_2014_04$DateTimeUTC > WSS_2014_04$dawn & WSS_2014_04$DateTimeUTC < WSS_2014_04$dusk, "Day", "Night")
+
 # Calculating Timelag
 WSS_2014_04 <-WSS_2014_04 %>%
   group_by(TierID) %>%
@@ -289,29 +294,78 @@ WSS_2014_04 <-WSS_2014_04 %>%
 WSS_2014_04 <- WSS_2014_04 %>%
   group_by(TierID) %>%
   mutate(steplength = sqrt((E- lead(E,1))^2 + (N -lead(N,1))^2))
+
 # Calculating speed
 WSS_2014_04 <- WSS_2014_04 %>% 
   group_by(TierID) %>%
   mutate(speed = (steplength/timelag) *3.6)
 WSS_2014_04$TierName <- as.factor(WSS_2014_04$TierName)
 levels(WSS_2014_04$TierName)
+
+# Seperating Data Day and night
+WSS_2014_04_day <- WSS_2014_04 %>%
+  filter(daynight == "Day")
+WSS_2014_04_night  <- WSS_2014_04 %>%
+  filter(daynight == "Night")
+
 # Filtering for individuals to plot the data
-WSS_2014_04_Caroline <- WSS_2014_04 %>%
+WSS_2014_04_Caroline <- WSS_2014_04_night %>%
   filter(TierName == "Caroline")
-WSS_2014_04_Isabelle <- WSS_2014_04 %>%
+WSS_2014_04_Isabelle <- WSS_2014_04_night %>%
   filter(TierName == "Isabelle")
-WSS_2014_04_Nicole <- WSS_2014_04 %>%
+WSS_2014_04_Nicole <- WSS_2014_04_night %>%
   filter(TierName == "Nicole")
-WSS_2014_04_Sabine <- WSS_2014_04 %>%
+WSS_2014_04_Sabine <- WSS_2014_04_night %>%
   filter(TierName == "Sabine")
-WSS_2014_04_Ueli <- WSS_2014_04 %>%
+WSS_2014_04_Ueli <- WSS_2014_04_night %>%
   filter(TierName == "Ueli")
 
 # Creating Plot of every individual
-ggplot() +
+WSS_2014_04_Caro_pl <- ggplot() +
   geom_point(data = WSS_2014_04_Caroline, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2014_04_Caroline$Schreck.E, y0 = WSS_2014_04_Caroline$Schreck.N, r = 1500)) +
+  geom_circle(aes(x0 = WSS_2014_04_Caroline$Schreck.E, y0 = WSS_2014_04_Caroline$Schreck.N, r = 1000)) +
+  geom_circle(aes(x0 = WSS_2014_04_Caroline$Schreck.E, y0 = WSS_2014_04_Caroline$Schreck.N, r = 500))  +
   geom_path(data = WSS_2014_04_Caroline, aes(x=E, y=N, colour = speed)) +
-  scale_colour_gradientn(colours = terrain.colors(5)) +
-  geom_point(data = WSS_2014_04_Caroline, aes(x=Schreck.E, y=Schreck.N), colour = "red") +
-  geom_circle
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2014_04_Caroline, aes(x=Schreck.E, y=Schreck.N), shape = 21)
+
+WSS_2014_04_Isa_pl <- ggplot() +
+  geom_point(data = WSS_2014_04_Isabelle, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2014_04_Isabelle$Schreck.E, y0 = WSS_2014_04_Isabelle$Schreck.N, r = 1500)) +
+  geom_circle(aes(x0 = WSS_2014_04_Isabelle$Schreck.E, y0 = WSS_2014_04_Isabelle$Schreck.N, r = 1000)) +
+  geom_circle(aes(x0 = WSS_2014_04_Isabelle$Schreck.E, y0 = WSS_2014_04_Isabelle$Schreck.N, r = 500))  +
+  geom_path(data = WSS_2014_04_Isabelle, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2014_04_Isabelle, aes(x=Schreck.E, y=Schreck.N), shape = 21)
+
+WSS_2014_04_Nicole_pl <- ggplot() +
+  geom_point(data = WSS_2014_04_Nicole, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2014_04_Nicole$Schreck.E, y0 = WSS_2014_04_Nicole$Schreck.N, r = 1500)) +
+  geom_circle(aes(x0 = WSS_2014_04_Nicole$Schreck.E, y0 = WSS_2014_04_Nicole$Schreck.N, r = 1000)) +
+  geom_circle(aes(x0 = WSS_2014_04_Nicole$Schreck.E, y0 = WSS_2014_04_Nicole$Schreck.N, r = 500))  +
+  geom_path(data = WSS_2014_04_Nicole, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2014_04_Nicole, aes(x=Schreck.E, y=Schreck.N), shape = 21)
+
+WSS_2014_04_Sabine_pl <- ggplot() +
+  geom_point(data = WSS_2014_04_Sabine, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2014_04_Sabine$Schreck.E, y0 = WSS_2014_04_Sabine$Schreck.N, r = 1500)) +
+  geom_circle(aes(x0 = WSS_2014_04_Sabine$Schreck.E, y0 = WSS_2014_04_Sabine$Schreck.N, r = 1000)) +
+  geom_circle(aes(x0 = WSS_2014_04_Sabine$Schreck.E, y0 = WSS_2014_04_Sabine$Schreck.N, r = 500))  +
+  geom_path(data = WSS_2014_04_Sabine, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2014_04_Sabine, aes(x=Schreck.E, y=Schreck.N), shape = 21)
+
+WSS_2014_04_Ueli_pl <- ggplot() +
+  geom_point(data = WSS_2014_04_Ueli, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2014_04_Ueli$Schreck.E, y0 = WSS_2014_04_Ueli$Schreck.N, r = 1500)) +
+  geom_circle(aes(x0 = WSS_2014_04_Ueli$Schreck.E, y0 = WSS_2014_04_Ueli$Schreck.N, r = 1000)) +
+  geom_circle(aes(x0 = WSS_2014_04_Ueli$Schreck.E, y0 = WSS_2014_04_Ueli$Schreck.N, r = 500))  +
+  geom_path(data = WSS_2014_04_Ueli, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2014_04_Ueli, aes(x=Schreck.E, y=Schreck.N), shape = 21)
+
+ggplot(WSS_2014_04_Caroline, aes(x = DateTimeUTC, y = speed)) +
+  geom_point()
 

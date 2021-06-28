@@ -49,7 +49,7 @@ library(purrr)
 
 ## Discussion
 
-#References
+## References
 Geisser, H. & Reyer, H.-U. 2005. The influence of food and temperature on population density of wild 	boar Sus scrofa in the Thurgau (Switzerland). Journal of Zoology 267: 89-96
 Massei, G. Kindberg, J. Licoppe, A. Gačić, D. Šprem, N. Kamler, J. Baubet, E. Hohmann, U. Monaco, A. 	Ozoliš, J. Cellina, S. Podgórski, T. Fonseca, C. Markov, N. Pokorny, B. Rosell, C. Náhlik, A. 2015. 	Wild boar populations up, numbers of hunters down? A review of trends and implications for 	Europe. Pest Management Science 71: 492- 500
 Suter, S.M. & Eyholzer, R. 2010. Interkantonales Wildschweinprojekt FR-BE-VD, Räumliche und 	zeitliche Habitatnutzung, Schäden an landwirtschaftlichen Kulturen und Einfluss der Jagd auf 	das Raumverhalten der Wildschweine am Südostufer des Neuenburgersees, WLS.CH im 	Auftrag der Kantone FR/BE/VD und des BAFU
