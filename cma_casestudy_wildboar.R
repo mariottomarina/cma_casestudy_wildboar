@@ -52,7 +52,8 @@ ggplot() +
   geom_point(data = Wildschwein_BE, aes(x= E, y=N)) +
   geom_path(data = Wildschwein_BE, aes(x=E, y=N)) +
   geom_point(data = Schrecklocation, aes(x=E, y=N, shape = jagddruck), colour = "red")
-  
+
+######Plot machen für jedes Wildschwein
 
 # Setting column day/night to Wildbaor data
 

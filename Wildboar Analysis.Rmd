@@ -20,20 +20,23 @@ in der Landwirtschaft und Management von Wildschweinen in Schutzgebieten" conduc
 
 ### Pre-processing 
 
+
 calculated times for dawn and dusk for every day each Schreck was running
 calculated distance of wild boar to scare off measures
 calculate speed
 
 ### Methods
-statistical test 
+Auf Normalverteilung und Varianzhomogenität getestet. Alpha = 0.05
+statistical test
 
 ### Limitations
 The given data limits the analysis in a few way. The recorded movement of the wildboar is only given in an interval of 15 minutes. Therefore, a reaction to the scare-off measure might not be recorded at all as it might have happended in the 15 minutes between the recordings. The operational data of the scare-off measures contain the information on what date the scare-off measures were started and stopped and that they started every evening once it was dark enough, which was measured with a light sensor. However, the exact time when they went off to scare-off the wild boar was not recorded. That makes it difficult to draw a causality between scare-off measure and wild boar movement.
+Jagdintensität mitreinnehmen. --> Diese Frage können wir mit unseren Daten nicht beantworten.
 
-Limitations of the methods: 
+Limitations of the methods:
 
 ## Results
-```{r, echo = FALSE}
+```{r, include = FALSE}
 library(readr)        # to import tabular data (e.g. csv)
 library(dplyr)        # to manipulate (tabular) data
 library(ggplot2)      # to visualize data
@@ -49,6 +52,7 @@ library(rgdal)
 library(spatialrisk)
 library(purrr)
 ```
+
 
 
 ## Discussion
