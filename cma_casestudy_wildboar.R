@@ -54,6 +54,160 @@ ggplot() +
   geom_point(data = Schrecklocation, aes(x=E, y=N, shape = jagddruck), colour = "red")
 
 ######Plot machen für jedes Wildschwein
+Wildschwein_BE$TierName <- as.factor(Wildschwein_BE$TierName)
+levels(Wildschwein_BE$TierName)
+
+Amos <- Wildschwein_BE %>%
+  filter(TierName =="Amos")
+Amos_plot <- ggplot() +
+  geom_path(data = Amos, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Amos, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Amos_plot_alldata.png", Amos_plot)
+
+Caroline <- Wildschwein_BE %>%
+  filter(TierName =="Caroline")
+Caroline_plot <- ggplot() +
+  geom_path(data = Caroline, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Caroline, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Caroline_plot_alldata.png", Caroline_plot)
+
+Claude <- Wildschwein_BE %>%
+  filter(TierName =="Claude")
+Claude_plot <- ggplot() +
+  geom_path(data = Claude, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Claude, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Claude_plot_alldata.png", Claude_plot)
+
+Donar <- Wildschwein_BE %>%
+  filter(TierName =="Donar")
+Donar_plot <- ggplot() +
+  geom_path(data = Donar, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Donar, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Donar_plot_alldata.png", Donar_plot)
+
+Evelin <- Wildschwein_BE %>%
+  filter(TierName =="Evelin")
+Evelin_plot <- ggplot() +
+  geom_path(data = Evelin, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Evelin, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Evelin_plot_alldata.png", Evelin_plot)
+
+Franz <- Wildschwein_BE %>%
+  filter(TierName =="Franz")
+Franz_plot <- ggplot() +
+  geom_path(data = Franz, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Franz, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Franz_plot_alldata.png", Franz_plot)
+
+Frida <- Wildschwein_BE %>%
+  filter(TierName =="Frida")
+Frida_plot <- ggplot() +
+  geom_path(data = Frida, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Frida, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Frida_plot_alldata.png", Frida_plot)
+
+Fritz <- Wildschwein_BE %>%
+  filter(TierName =="Fritz")
+Fritz_plot <- ggplot() +
+  geom_path(data = Fritz, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Fritz, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Fritz_plot_alldata.png", Fritz_plot)
+
+Gaby <- Wildschwein_BE %>%
+  filter(TierName =="Gaby")
+Gaby_plot <- ggplot() +
+  geom_path(data = Gaby, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Gaby, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Gaby_plot_alldata.png", Gaby_plot)
+
+Isabelle <- Wildschwein_BE %>%
+  filter(TierName =="Isabelle")
+Isabelle_plot <- ggplot() +
+  geom_path(data = Isabelle, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Isabelle, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Isabelle_plot_alldata.png", Isabelle_plot)
+
+Joanna <- Wildschwein_BE %>%
+  filter(TierName =="Joanna")
+Joanna_plot <- ggplot() +
+  geom_path(data = Joanna, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Joanna, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Joanna_plot_alldata.png", Joanna_plot)
+
+Miriam <- Wildschwein_BE %>%
+  filter(TierName =="Miriam")
+Miriam_plot <- ggplot() +
+  geom_path(data = Miriam, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Miriam, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Joanna_plot_alldata.png", Miriam_plot)
+
+Nicole <- Wildschwein_BE %>%
+  filter(TierName =="Nicole")
+Nicole_plot <- ggplot() +
+  geom_path(data = Nicole, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Nicole, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Nicole_plot_alldata.png", Nicole_plot)
+
+Olga <- Wildschwein_BE %>%
+  filter(TierName =="Olga")
+Olga_plot <- ggplot() +
+  geom_path(data = Olga, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Olga, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Olga_plot_alldata.png", Olga_plot)
+
+Rosa <- Wildschwein_BE %>%
+  filter(TierName =="Rosa")
+Rosa_plot <- ggplot() +
+  geom_path(data = Rosa, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Rosa, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Rosa_plot_alldata.png", Rosa_plot)
+
+Ruth <- Wildschwein_BE %>%
+  filter(TierName =="Ruth")
+Ruth_plot <- ggplot() +
+  geom_path(data = Ruth, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Ruth, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Ruth_plot_alldata.png", Ruth_plot)
+
+Sabine <- Wildschwein_BE %>%
+  filter(TierName =="Sabine")
+Sabine_plot <- ggplot() +
+  geom_path(data = Sabine, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Sabine, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Sabine_plot_alldata.png", Sabine_plot)
+
+Ueli <- Wildschwein_BE %>%
+  filter(TierName =="Ueli")
+Ueli_plot <- ggplot() +
+  geom_path(data = Ueli, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Ueli, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Ueli_plot_alldata.png", Ueli_plot)
+
+Venus <- Wildschwein_BE %>%
+  filter(TierName =="Venus")
+Venus_plot <- ggplot() +
+  geom_path(data = Venus, aes(x=E, y=N), colour = "grey", lwd = 1) +
+  geom_point(data = Venus, aes(x= E, y=N)) +
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+ggsave("Venus_plot_alldata.png", Venus_plot)
 
 # Setting column day/night to Wildbaor data
 
