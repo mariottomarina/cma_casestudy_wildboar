@@ -3,7 +3,7 @@ library(readr)        # to import tabular data (e.g. csv)
 library(dplyr)        # to manipulate (tabular) data
 library(ggplot2)      # to visualize data
 library(lubridate)    # To handle dates and times
-devtools::install_github("ComputationalMovementAnalysis/ComputationalMovementAnalysisData") # getting data from R Package
+# devtools::install_github("ComputationalMovementAnalysis/ComputationalMovementAnalysisData") # getting data from R Package
 library(ComputationalMovementAnalysisData) #Wild boar data is on that package
 library(sf) # encoding spatial vector data 
 library(ggmap)
@@ -62,7 +62,8 @@ Amos <- Wildschwein_BE %>%
 Amos_plot <- ggplot() +
   geom_path(data = Amos, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Amos, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Amos_plot_alldata.png", Amos_plot)
 
 Caroline <- Wildschwein_BE %>%
@@ -70,7 +71,8 @@ Caroline <- Wildschwein_BE %>%
 Caroline_plot <- ggplot() +
   geom_path(data = Caroline, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Caroline, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Caroline_plot_alldata.png", Caroline_plot)
 
 Claude <- Wildschwein_BE %>%
@@ -78,7 +80,8 @@ Claude <- Wildschwein_BE %>%
 Claude_plot <- ggplot() +
   geom_path(data = Claude, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Claude, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Claude_plot_alldata.png", Claude_plot)
 
 Donar <- Wildschwein_BE %>%
@@ -86,7 +89,8 @@ Donar <- Wildschwein_BE %>%
 Donar_plot <- ggplot() +
   geom_path(data = Donar, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Donar, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Donar_plot_alldata.png", Donar_plot)
 
 Evelin <- Wildschwein_BE %>%
@@ -94,7 +98,8 @@ Evelin <- Wildschwein_BE %>%
 Evelin_plot <- ggplot() +
   geom_path(data = Evelin, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Evelin, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Evelin_plot_alldata.png", Evelin_plot)
 
 Franz <- Wildschwein_BE %>%
@@ -102,7 +107,8 @@ Franz <- Wildschwein_BE %>%
 Franz_plot <- ggplot() +
   geom_path(data = Franz, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Franz, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Franz_plot_alldata.png", Franz_plot)
 
 Frida <- Wildschwein_BE %>%
@@ -110,7 +116,8 @@ Frida <- Wildschwein_BE %>%
 Frida_plot <- ggplot() +
   geom_path(data = Frida, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Frida, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Frida_plot_alldata.png", Frida_plot)
 
 Fritz <- Wildschwein_BE %>%
@@ -118,7 +125,8 @@ Fritz <- Wildschwein_BE %>%
 Fritz_plot <- ggplot() +
   geom_path(data = Fritz, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Fritz, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Fritz_plot_alldata.png", Fritz_plot)
 
 Gaby <- Wildschwein_BE %>%
@@ -126,7 +134,8 @@ Gaby <- Wildschwein_BE %>%
 Gaby_plot <- ggplot() +
   geom_path(data = Gaby, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Gaby, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Gaby_plot_alldata.png", Gaby_plot)
 
 Isabelle <- Wildschwein_BE %>%
@@ -134,7 +143,8 @@ Isabelle <- Wildschwein_BE %>%
 Isabelle_plot <- ggplot() +
   geom_path(data = Isabelle, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Isabelle, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Isabelle_plot_alldata.png", Isabelle_plot)
 
 Joanna <- Wildschwein_BE %>%
@@ -142,7 +152,8 @@ Joanna <- Wildschwein_BE %>%
 Joanna_plot <- ggplot() +
   geom_path(data = Joanna, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Joanna, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Joanna_plot_alldata.png", Joanna_plot)
 
 Miriam <- Wildschwein_BE %>%
@@ -150,7 +161,8 @@ Miriam <- Wildschwein_BE %>%
 Miriam_plot <- ggplot() +
   geom_path(data = Miriam, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Miriam, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Joanna_plot_alldata.png", Miriam_plot)
 
 Nicole <- Wildschwein_BE %>%
@@ -158,7 +170,8 @@ Nicole <- Wildschwein_BE %>%
 Nicole_plot <- ggplot() +
   geom_path(data = Nicole, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Nicole, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Nicole_plot_alldata.png", Nicole_plot)
 
 Olga <- Wildschwein_BE %>%
@@ -166,7 +179,8 @@ Olga <- Wildschwein_BE %>%
 Olga_plot <- ggplot() +
   geom_path(data = Olga, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Olga, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Olga_plot_alldata.png", Olga_plot)
 
 Rosa <- Wildschwein_BE %>%
@@ -174,7 +188,8 @@ Rosa <- Wildschwein_BE %>%
 Rosa_plot <- ggplot() +
   geom_path(data = Rosa, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Rosa, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Rosa_plot_alldata.png", Rosa_plot)
 
 Ruth <- Wildschwein_BE %>%
@@ -182,7 +197,8 @@ Ruth <- Wildschwein_BE %>%
 Ruth_plot <- ggplot() +
   geom_path(data = Ruth, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Ruth, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Ruth_plot_alldata.png", Ruth_plot)
 
 Sabine <- Wildschwein_BE %>%
@@ -190,7 +206,8 @@ Sabine <- Wildschwein_BE %>%
 Sabine_plot <- ggplot() +
   geom_path(data = Sabine, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Sabine, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Sabine_plot_alldata.png", Sabine_plot)
 
 Ueli <- Wildschwein_BE %>%
@@ -198,7 +215,8 @@ Ueli <- Wildschwein_BE %>%
 Ueli_plot <- ggplot() +
   geom_path(data = Ueli, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Ueli, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Ueli_plot_alldata.png", Ueli_plot)
 
 Venus <- Wildschwein_BE %>%
@@ -206,8 +224,19 @@ Venus <- Wildschwein_BE %>%
 Venus_plot <- ggplot() +
   geom_path(data = Venus, aes(x=E, y=N), colour = "grey", lwd = 1) +
   geom_point(data = Venus, aes(x= E, y=N)) +
-  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2)
+  geom_point(data = Schrecklocation, aes(x=E, y=N), colour = "blue", size = 2) +
+  theme_bw()
 ggsave("Venus_plot_alldata.png", Venus_plot)
+
+# Plot Time Overlap boars and schrecks
+Overlap_Schreck_boar <- ggplot() +
+  geom_line(Wildschwein_BE, mapping = aes(x = date, y = TierName), colour = "darkgreen") +
+  geom_line(Locations_adapted, mapping = aes(x = dates, y = id), colour = "blue") +
+  theme_bw() +
+  scale_x_date(date_breaks = "6 month") +
+  labs(y = "Animal Names and SchreckID", x = "Time")
+ggsave("Overlap_schreck_boar.png", Overlap_Schreck_boar)
+
 
 # Setting column day/night to Wildbaor data
 
@@ -478,48 +507,58 @@ WSS_2014_04_Ueli <- WSS_2014_04_night %>%
 # Creating Plot of every individual
 WSS_2014_04_Caro_pl <- ggplot() +
   geom_point(data = WSS_2014_04_Caroline, aes(x= E, y=N)) +
-  geom_circle(aes(x0 = WSS_2014_04_Caroline$Schreck.E, y0 = WSS_2014_04_Caroline$Schreck.N, r = 1500)) +
-  geom_circle(aes(x0 = WSS_2014_04_Caroline$Schreck.E, y0 = WSS_2014_04_Caroline$Schreck.N, r = 1000)) +
-  geom_circle(aes(x0 = WSS_2014_04_Caroline$Schreck.E, y0 = WSS_2014_04_Caroline$Schreck.N, r = 500))  +
+  geom_circle(aes(x0 = WSS_2014_04_Caroline$Schreck.E, y0 = WSS_2014_04_Caroline$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2014_04_Caroline$Schreck.E, y0 = WSS_2014_04_Caroline$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2014_04_Caroline$Schreck.E, y0 = WSS_2014_04_Caroline$Schreck.N, r = 500), colour = "deepskyblue")  +
   geom_path(data = WSS_2014_04_Caroline, aes(x=E, y=N, colour = speed)) +
   scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
-  geom_point(data = WSS_2014_04_Caroline, aes(x=Schreck.E, y=Schreck.N), shape = 21)
+  geom_point(data = WSS_2014_04_Caroline, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2014_04_Caro.png", WSS_2014_04_Caro_pl)
 
 WSS_2014_04_Isa_pl <- ggplot() +
   geom_point(data = WSS_2014_04_Isabelle, aes(x= E, y=N)) +
-  geom_circle(aes(x0 = WSS_2014_04_Isabelle$Schreck.E, y0 = WSS_2014_04_Isabelle$Schreck.N, r = 1500)) +
-  geom_circle(aes(x0 = WSS_2014_04_Isabelle$Schreck.E, y0 = WSS_2014_04_Isabelle$Schreck.N, r = 1000)) +
-  geom_circle(aes(x0 = WSS_2014_04_Isabelle$Schreck.E, y0 = WSS_2014_04_Isabelle$Schreck.N, r = 500))  +
+  geom_circle(aes(x0 = WSS_2014_04_Isabelle$Schreck.E, y0 = WSS_2014_04_Isabelle$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2014_04_Isabelle$Schreck.E, y0 = WSS_2014_04_Isabelle$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2014_04_Isabelle$Schreck.E, y0 = WSS_2014_04_Isabelle$Schreck.N, r = 500), colour = "deepskyblue")  +
   geom_path(data = WSS_2014_04_Isabelle, aes(x=E, y=N, colour = speed)) +
   scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
-  geom_point(data = WSS_2014_04_Isabelle, aes(x=Schreck.E, y=Schreck.N), shape = 21)
+  geom_point(data = WSS_2014_04_Isabelle, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2014_04_Isa.png", WSS_2014_04_Isa_pl)
 
 WSS_2014_04_Nicole_pl <- ggplot() +
   geom_point(data = WSS_2014_04_Nicole, aes(x= E, y=N)) +
-  geom_circle(aes(x0 = WSS_2014_04_Nicole$Schreck.E, y0 = WSS_2014_04_Nicole$Schreck.N, r = 1500)) +
-  geom_circle(aes(x0 = WSS_2014_04_Nicole$Schreck.E, y0 = WSS_2014_04_Nicole$Schreck.N, r = 1000)) +
-  geom_circle(aes(x0 = WSS_2014_04_Nicole$Schreck.E, y0 = WSS_2014_04_Nicole$Schreck.N, r = 500))  +
+  geom_circle(aes(x0 = WSS_2014_04_Nicole$Schreck.E, y0 = WSS_2014_04_Nicole$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2014_04_Nicole$Schreck.E, y0 = WSS_2014_04_Nicole$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2014_04_Nicole$Schreck.E, y0 = WSS_2014_04_Nicole$Schreck.N, r = 500), colour = "deepskyblue")  +
   geom_path(data = WSS_2014_04_Nicole, aes(x=E, y=N, colour = speed)) +
   scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
-  geom_point(data = WSS_2014_04_Nicole, aes(x=Schreck.E, y=Schreck.N), shape = 21)
+  geom_point(data = WSS_2014_04_Nicole, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2014_04_Nicole.png", WSS_2014_04_Nicole_pl)
 
 WSS_2014_04_Sabine_pl <- ggplot() +
   geom_point(data = WSS_2014_04_Sabine, aes(x= E, y=N)) +
-  geom_circle(aes(x0 = WSS_2014_04_Sabine$Schreck.E, y0 = WSS_2014_04_Sabine$Schreck.N, r = 1500)) +
-  geom_circle(aes(x0 = WSS_2014_04_Sabine$Schreck.E, y0 = WSS_2014_04_Sabine$Schreck.N, r = 1000)) +
-  geom_circle(aes(x0 = WSS_2014_04_Sabine$Schreck.E, y0 = WSS_2014_04_Sabine$Schreck.N, r = 500))  +
+  geom_circle(aes(x0 = WSS_2014_04_Sabine$Schreck.E, y0 = WSS_2014_04_Sabine$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2014_04_Sabine$Schreck.E, y0 = WSS_2014_04_Sabine$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2014_04_Sabine$Schreck.E, y0 = WSS_2014_04_Sabine$Schreck.N, r = 500), colour = "deepskyblue")  +
   geom_path(data = WSS_2014_04_Sabine, aes(x=E, y=N, colour = speed)) +
   scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
-  geom_point(data = WSS_2014_04_Sabine, aes(x=Schreck.E, y=Schreck.N), shape = 21)
+  geom_point(data = WSS_2014_04_Sabine, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2014_04_Sabine.png", WSS_2014_04_Sabine_pl)
 
 WSS_2014_04_Ueli_pl <- ggplot() +
   geom_point(data = WSS_2014_04_Ueli, aes(x= E, y=N)) +
-  geom_circle(aes(x0 = WSS_2014_04_Ueli$Schreck.E, y0 = WSS_2014_04_Ueli$Schreck.N, r = 1500)) +
-  geom_circle(aes(x0 = WSS_2014_04_Ueli$Schreck.E, y0 = WSS_2014_04_Ueli$Schreck.N, r = 1000)) +
-  geom_circle(aes(x0 = WSS_2014_04_Ueli$Schreck.E, y0 = WSS_2014_04_Ueli$Schreck.N, r = 500))  +
+  geom_circle(aes(x0 = WSS_2014_04_Ueli$Schreck.E, y0 = WSS_2014_04_Ueli$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2014_04_Ueli$Schreck.E, y0 = WSS_2014_04_Ueli$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2014_04_Ueli$Schreck.E, y0 = WSS_2014_04_Ueli$Schreck.N, r = 500), colour = "deepskyblue")  +
   geom_path(data = WSS_2014_04_Ueli, aes(x=E, y=N, colour = speed)) +
   scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
-  geom_point(data = WSS_2014_04_Ueli, aes(x=Schreck.E, y=Schreck.N), shape = 21)
+  geom_point(data = WSS_2014_04_Ueli, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2014_04_Ueli.png", WSS_2014_04_Ueli_pl)
 
 ggplot(WSS_2014_04_Caroline, aes(x = DateTimeUTC, y = speed)) +
   geom_point()
