@@ -427,14 +427,19 @@ WSS_2014_06_a <- distance_14_fl %>%
 # year 2015
 WSS_2015_01_s <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_01"  & DateTimeUTC > Schrecklocation$datum_on [5] & DateTimeUTC < Schrecklocation$datum_off [5])
+WSS_2015_01_s <- distinct(WSS_2015_01_s)
 WSS_2015_01_a <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_01"  & DateTimeUTC > Schrecklocation$datum_on [6] & DateTimeUTC < Schrecklocation$datum_off [6])
+WSS_2015_01_a <- distinct(WSS_2015_01_a)
 WSS_2015_03_s <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_03"  & DateTimeUTC > Schrecklocation$datum_on [7] & DateTimeUTC < Schrecklocation$datum_off [7])
+WSS_2015_03_s <- distinct(WSS_2015_03_s)
 WSS_2015_03_a <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_03"  & DateTimeUTC > Schrecklocation$datum_on [8] & DateTimeUTC < Schrecklocation$datum_off [8])
+WSS_2015_03_s <- distinct(WSS_2015_03_a)
 WSS_2015_04 <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_04"  & DateTimeUTC > Schrecklocation$datum_on [9] & DateTimeUTC < Schrecklocation$datum_off [10])
+WSS_2015_04 <- distinct(WSS_2015_04)
 
 # year 2016
 WSS_2016_01 <- distance_16_fl %>%
@@ -460,7 +465,7 @@ WSS_2015_04
 
 
 # adding data from other dataframes to this file
-# WSS 2014_04
+# WSS 2014_04 ####
 WSS_2014_04$Schreck.N <- Schrecklocation$N [1]
 WSS_2014_04$Schreck.E <- Schrecklocation$E [1]
 WSS_2014_04$Schreck.lat <- Schrecklocation$lat[1]
@@ -588,7 +593,7 @@ WSS_2014_04_Ueli_pl <- ggplot() +
 ggsave("WSS_2014_04_Ueli.png", WSS_2014_04_Ueli_pl)
 
 
-# WSS 2014_05
+# WSS 2014_05 ####
 WSS_2014_05$Schreck.N <- Schrecklocation$N [2]
 WSS_2014_05$Schreck.E <- Schrecklocation$E [2]
 WSS_2014_05$Schreck.lat <- Schrecklocation$lat[2]
@@ -702,7 +707,7 @@ WSS_2014_05_Ueli_pl <- ggplot() +
   theme_bw()
 ggsave("WSS_2014_05_Ueli.png", WSS_2014_05_Ueli_pl)
 
-# WSS 2015_01_s
+# WSS 2015_01_s ####
 WSS_2015_01_s$Schreck.N <- Schrecklocation$N [5]
 WSS_2015_01_s$Schreck.E <- Schrecklocation$E [5]
 WSS_2015_01_s$Schreck.lat <- Schrecklocation$lat[5]
@@ -758,8 +763,8 @@ kruskal.test(WSS_2015_01_s$speed, WSS_2015_01_s$distance_kat) # Alpha < 0.001
 pairwise.wilcox.test(WSS_2015_01_s$speed, WSS_2015_01_s$distance_kat, p.adjust.method = "holm")
 
 #        far     midway 
-# midway 1.3e-12 -      
-# near   7.8e-06 2.2e-08 
+# midway 1.4e-06 -      
+# near   0.00190 0.00013
 
 # Filtering for individuals to plot the data
 WSS_2015_01_s_Caroline <- WSS_2015_01_s_night %>%
@@ -774,6 +779,8 @@ WSS_2015_01_s_Rosa <- WSS_2015_01_s_night %>%
   filter(TierName == "Rosa")
 WSS_2015_01_s_Sabine <- WSS_2015_01_s_night %>%
   filter(TierName == "Sabine")
+WSS_2015_01_s_Franz <- WSS_2015_01_s_night %>%
+  filter(TierName =="Franz")
 
 # Creating Plot of every individual
 WSS_2015_01_s_Caroline_pl <- ggplot() +
@@ -842,7 +849,18 @@ WSS_2015_01_s_Sabine_pl <- ggplot() +
   theme_bw()
 ggsave("WSS_2015_01_s_Sabine.png", WSS_2015_01_s_Sabine_pl)
 
-# WSS_2015_01_a
+WSS_2015_01_s_Franz_pl <- ggplot() +
+  geom_point(data = WSS_2015_01_s_Franz, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_01_s_Franz$Schreck.E, y0 = WSS_2015_01_s_Franz$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_01_s_Franz$Schreck.E, y0 = WSS_2015_01_s_Franz$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_01_s_Franz$Schreck.E, y0 = WSS_2015_01_s_Franz$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_01_s_Franz, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2015_01_s_Franz, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2015_01_s_Franz.png", WSS_2015_01_s_Franz_pl)
+
+# WSS_2015_01_a ####
 WSS_2015_01_a$Schreck.N <- Schrecklocation$N [6]
 WSS_2015_01_a$Schreck.E <- Schrecklocation$E [6]
 WSS_2015_01_a$Schreck.lat <- Schrecklocation$lat[6]
@@ -900,7 +918,7 @@ pairwise.wilcox.test(WSS_2015_01_a$speed, WSS_2015_01_a$distance_kat, p.adjust.m
 
 #        far     midway 
 #midway < 2e-16 -      
-#near   < 2e-16 3.1e-14
+#near   < 2e-16 6.9e-08
 
 # Filtering for individuals to plot the data
 WSS_2015_01_a_Caroline <- WSS_2015_01_a_night %>%
@@ -937,16 +955,16 @@ WSS_2015_01_a_Franz_pl <- ggplot() +
   theme_bw()
 ggsave("WSS_2015_01_a_Franz.png", WSS_2015_01_a_Franz_pl)
 
-WSS_2015_01_s_Olga_pl <- ggplot() +
-  geom_point(data = WSS_2015_01_s_Olga, aes(x= E, y=N)) +
-  geom_circle(aes(x0 = WSS_2015_01_s_Olga$Schreck.E, y0 = WSS_2015_01_s_Olga$Schreck.N, r = 1500), colour = "deepskyblue4") +
-  geom_circle(aes(x0 = WSS_2015_01_s_Olga$Schreck.E, y0 = WSS_2015_01_s_Olga$Schreck.N, r = 1000), colour = "deepskyblue2") +
-  geom_circle(aes(x0 = WSS_2015_01_s_Olga$Schreck.E, y0 = WSS_2015_01_s_Olga$Schreck.N, r = 500), colour = "deepskyblue")  +
-  geom_path(data = WSS_2015_01_s_Olga, aes(x=E, y=N, colour = speed)) +
+WSS_2015_01_a_Olga_pl <- ggplot() +
+  geom_point(data = WSS_2015_01_a_Olga, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_01_a_Olga$Schreck.E, y0 = WSS_2015_01_a_Olga$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_01_a_Olga$Schreck.E, y0 = WSS_2015_01_a_Olga$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_01_a_Olga$Schreck.E, y0 = WSS_2015_01_a_Olga$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_01_a_Olga, aes(x=E, y=N, colour = speed)) +
   scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
-  geom_point(data = WSS_2015_01_s_Olga, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  geom_point(data = WSS_2015_01_a_Olga, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
   theme_bw()
-ggsave("WSS_2015_01_s_Olga.png", WSS_2015_01_s_Olga_pl)
+ggsave("WSS_2015_01_a_Olga.png", WSS_2015_01_a_Olga_pl)
 
 WSS_2015_01_a_Ruth_pl <- ggplot() +
   geom_point(data = WSS_2015_01_s_Ruth, aes(x= E, y=N)) +
@@ -969,4 +987,95 @@ WSS_2015_01_a_Sabine_pl <- ggplot() +
   geom_point(data = WSS_2015_01_a_Sabine, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
   theme_bw()
 ggsave("WSS_2015_01_a_Sabine.png", WSS_2015_01_a_Sabine_pl)
+
+# WSS_2015_03_s ####
+WSS_2015_03_s$Schreck.N <- Schrecklocation$N [7]
+WSS_2015_03_s$Schreck.E <- Schrecklocation$E [7]
+WSS_2015_03_s$Schreck.lat <- Schrecklocation$lat[7]
+WSS_2015_03_s$Schreck.lon <- Schrecklocation$lon [7]
+WSS_2015_03_s <- left_join(WSS_2015_03_s, Wildschwein_BE_15, by = c("TierName" = "TierName", "DateTimeUTC" = "DatetimeUTC"))
+WSS_2015_03_s <- left_join(WSS_2015_03_s, Loc_adap_suntimes, by = c("date" = "dates", "IDSchreck" = "id", "Schreck.lat" = "lat", "Schreck.lon" = "lon"))
+WSS_2015_03_s$dusk <- with_tz(WSS_2015_03_s$dusk, "UTC")
+WSS_2015_03_s$dawn <- with_tz(WSS_2015_03_s$dawn, "UTC")
+WSS_2015_03_s$daynight <- ifelse(WSS_2015_03_s$DateTimeUTC > WSS_2015_03_s$dawn & WSS_2015_03_s$DateTimeUTC < WSS_2015_03_s$dusk, "Day", "Night")
+
+# Calculating Timelag
+WSS_2015_03_s <-WSS_2015_03_s %>%
+  group_by(TierID) %>%
+  mutate(timelag = as.integer(difftime(lead(DateTimeUTC),DateTimeUTC, units = "secs")))
+WSS_2015_03_s <- WSS_2015_03_s %>%
+  filter(timelag > 0 | timelag < 15000)
+# Calculating steplength 
+WSS_2015_03_s <- WSS_2015_03_s %>%
+  group_by(TierID) %>%
+  mutate(steplength = sqrt((E- lead(E,1))^2 + (N -lead(N,1))^2))
+
+# Calculating speed
+WSS_2015_03_s <- WSS_2015_03_s %>% 
+  group_by(TierID) %>%
+  mutate(speed = (steplength/timelag) * 3.6)
+WSS_2015_03_s$TierName <- as.factor(WSS_2015_03_s$TierName)
+levels(WSS_2015_03_s$TierName)
+
+# Create factors for distance
+WSS_2015_03_s$distance_kat [WSS_2015_03_s$distance <= 500] <- "near" 
+WSS_2015_03_s$distance_kat [WSS_2015_03_s$distance <= 1000 & WSS_2015_03_s$distance > 500] <- "midway"
+WSS_2015_03_s$distance_kat [WSS_2015_03_s$distance > 1000] <- "far"
+WSS_2015_03_s$distance_kat <- as.factor(WSS_2015_03_s$distance_kat)
+
+# Seperating Data Day and night
+WSS_2015_03_s_day <- WSS_2015_03_s %>%
+  filter(daynight == "Day")
+WSS_2015_03_s_night  <- WSS_2015_03_s %>%
+  filter(daynight == "Night")
+
+# Normalverteilung - Normality
+boxplot(WSS_2015_03_s$distance)
+boxplot(WSS_2015_03_s$speed)
+
+# shapiro.test(WSS_2014_04$distance)  --> Shapiro doesn't work because sample size is too big
+ks.test(x = WSS_2015_03_s$distance, y = "pnorm", alternative = "two.sided") # Keine Normalverteilung
+ks.test(x = WSS_2015_03_s$speed, y = "pnorm", alternative = "two.sided") # Keine Normalverteilung
+
+# Varianzhomogenität testen
+leveneTest(WSS_2015_03_s$speed, WSS_2015_03_s$distance_kat) # keine Varianzhomogenität 
+
+# As Normality and Homoscedasticity are not given we use a Kruskal Wallis test. 
+kruskal.test(WSS_2015_03_s$speed, WSS_2015_03_s$distance_kat) # Alpha < 0.001
+pairwise.wilcox.test(WSS_2015_03_s$speed, WSS_2015_03_s$distance_kat, p.adjust.method = "holm")
+
+#         far     midway 
+# midway 1.3e-10 -      
+# near   < 2e-16 6.7e-08
+
+# Filtering for individuals to plot the data
+WSS_2015_03_s_Ruth <- WSS_2015_03_s_night %>%
+  filter(TierName == "Ruth")
+WSS_2015_03_s_Sabine <- WSS_2015_03_s_night %>%
+  filter(TierName == "Sabine")
+
+# Creating Plot of every individual
+
+WSS_2015_03_s_Ruth_pl <- ggplot() +
+  geom_point(data = WSS_2015_03_s_Ruth, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_03_s_Ruth$Schreck.E, y0 = WSS_2015_03_s_Ruth$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_03_s_Ruth$Schreck.E, y0 = WSS_2015_03_s_Ruth$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_03_s_Ruth$Schreck.E, y0 = WSS_2015_03_s_Ruth$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_01_a_Ruth, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2015_03_s_Ruth, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2015_03_s_Ruth.png", WSS_2015_03_s_Ruth_pl)
+
+WSS_2015_03_s_Sabine_pl <- ggplot() +
+  geom_point(data = WSS_2015_03_s_Sabine, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_03_s_Sabine$Schreck.E, y0 = WSS_2015_03_s_Sabine$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_03_s_Sabine$Schreck.E, y0 = WSS_2015_03_s_Sabine$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_03_s_Sabine$Schreck.E, y0 = WSS_2015_03_s_Sabine$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_03_s_Sabine, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2015_03_s_Sabine, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2015_03_s_Sabine.png", WSS_2015_03_s_Sabine_pl)
+
 
