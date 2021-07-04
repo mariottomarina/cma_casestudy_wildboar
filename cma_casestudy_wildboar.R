@@ -416,43 +416,99 @@ distance_15_fl <- distance_15 %>%
 distance_16_fl <- distance_15 %>%
   filter(distance < 1500)
 
+distance_14_fl$DateTimeUTC <- with_tz(distance_14_fl$DateTimeUTC, "UTC")
+distance_15_fl$DateTimeUTC <- with_tz(distance_15_fl$DateTimeUTC, "UTC")
+distance_16_fl$DateTimeUTC <- with_tz(distance_16_fl$DateTimeUTC, "UTC")
+
+
 # year 2014
 WSS_2014_04 <- distance_14_fl %>%
-  filter(IDSchreck == "WSS_2014_04" & DateTimeUTC > Schrecklocation$datum_on [1] & DateTimeUTC < Schrecklocation$datum_off [1])
+  filter(IDSchreck == "WSS_2014_04")%>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [1]) %>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [1])
 WSS_2014_05 <- distance_14_fl %>%
-  filter(IDSchreck == "WSS_2014_05" & DateTimeUTC > Schrecklocation$datum_on [2] & DateTimeUTC < Schrecklocation$datum_off [2])
+  filter(IDSchreck == "WSS_2014_05") %>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [2]) %>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [2])
 WSS_2014_06_s <- distance_14_fl %>%
-  filter(IDSchreck == "WSS_2014_06"  & DateTimeUTC > Schrecklocation$datum_on [3] & DateTimeUTC < Schrecklocation$datum_off [3])  # delete
+  filter(IDSchreck == "WSS_2014_06")%>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [3]) %>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [3])  # delete
 WSS_2014_06_a <- distance_14_fl %>%
-  filter(IDSchreck == "WSS_2014_06"  & DateTimeUTC > Schrecklocation$datum_on [4] & DateTimeUTC < Schrecklocation$datum_off [4])  # delete
+  filter(IDSchreck == "WSS_2014_06") %>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [4]) %>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [4])  # delete
 
+Overlap_boar <- rbind(WSS_2014_04, WSS_2014_05, WSS_2014_06_s, WSS_2014_06_a)
+Overlap_boar$date <- as.Date(Overlap_boar$DateTimeUTC)
+Overlap_Schreck_boar_after_processing <- ggplot() +
+  geom_line(Overlap_boar, mapping = aes(x = date, y = TierName), colour = "darkgreen") +
+  geom_line(Locations_adapted, mapping = aes(x = dates, y = id), colour = "blue") +
+  theme_bw() +
+  scale_x_date(date_breaks = "6 month") +
+  labs(y = "Animal Names and SchreckID", x = "Time")
 # year 2015
 WSS_2015_01_s <- distance_15_fl %>%
-  filter(IDSchreck == "WSS_2015_01"  & DateTimeUTC > Schrecklocation$datum_on [5] & DateTimeUTC < Schrecklocation$datum_off [5])
+  filter(IDSchreck == "WSS_2015_01") %>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [5]) %>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [5])
 WSS_2015_01_s <- distinct(WSS_2015_01_s)
 WSS_2015_01_a <- distance_15_fl %>%
-  filter(IDSchreck == "WSS_2015_01"  & DateTimeUTC > Schrecklocation$datum_on [6] & DateTimeUTC < Schrecklocation$datum_off [6])
+  filter(IDSchreck == "WSS_2015_01") %>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [6]) %>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [6])
 WSS_2015_01_a <- distinct(WSS_2015_01_a)
 WSS_2015_03_s <- distance_15_fl %>%
-  filter(IDSchreck == "WSS_2015_03"  & DateTimeUTC > Schrecklocation$datum_on [7] & DateTimeUTC < Schrecklocation$datum_off [7])
+  filter(IDSchreck == "WSS_2015_03") %>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [7]) %>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [7])
 WSS_2015_03_s <- distinct(WSS_2015_03_s)
 WSS_2015_03_a <- distance_15_fl %>%
-  filter(IDSchreck == "WSS_2015_03"  & DateTimeUTC > Schrecklocation$datum_on [8] & DateTimeUTC < Schrecklocation$datum_off [8])
+  filter(IDSchreck == "WSS_2015_03") %>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [8]) %>% 
+  filter(DateTimeUTC <= Schrecklocation$datum_off [8])
 WSS_2015_03_a <- distinct(WSS_2015_03_a)
 WSS_2015_04 <- distance_15_fl %>%
-  filter(IDSchreck == "WSS_2015_04"  & DateTimeUTC > Schrecklocation$datum_on [9] & DateTimeUTC < Schrecklocation$datum_off [10])
+  filter(IDSchreck == "WSS_2015_04") %>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [9]) %>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [10])
 WSS_2015_04 <- distinct(WSS_2015_04)
+
+Overlap_boar <- rbind(WSS_2015_01_s, WSS_2015_01_a, WSS_2015_03_s, WSS_2015_03_a, WSS_2015_04)
+Overlap_boar$date <- as.Date(Overlap_boar$DateTimeUTC)
+Overlap_Schreck_boar_after_processing <- ggplot() +
+  geom_line(Overlap_boar, mapping = aes(x = date, y = TierName), colour = "darkgreen") +
+  geom_line(Locations_adapted, mapping = aes(x = dates, y = id), colour = "blue") +
+  theme_bw() +
+  scale_x_date(date_breaks = "6 month") +
+  labs(y = "Animal Names and SchreckID", x = "Time")
 
 # year 2016
 WSS_2016_01 <- distance_16_fl %>%
-  filter(IDSchreck == "WSS_2016_01"  & DateTimeUTC > Schrecklocation$datum_on [11] & DateTimeUTC < Schrecklocation$datum_off [11])  # delete
+  filter(IDSchreck == "WSS_2016_01") %>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [11]) %>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [11])  # delete
 WSS_2016_05 <- distance_16_fl %>%
-  filter(IDSchreck == "WSS_2016_05"  & DateTimeUTC > Schrecklocation$datum_on [12] & DateTimeUTC < Schrecklocation$datum_off [12])  # delete
+  filter(IDSchreck == "WSS_2016_05") %>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [12]) %>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [12])  # delete
 WSS_2016_06 <- distance_16_fl %>%
-  filter(IDSchreck == "WSS_2016_06"  & DateTimeUTC > Schrecklocation$datum_on [13] & DateTimeUTC < Schrecklocation$datum_off [13])  # delete
+  filter(IDSchreck == "WSS_2016_06") %>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [13]) %>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [13])  # delete
 WSS_2016_13 <- distance_16_fl %>%
-  filter(IDSchreck == "WSS_2016_13"  & DateTimeUTC > Schrecklocation$datum_on [14] & DateTimeUTC < Schrecklocation$datum_off [14])  # delete
+  filter(IDSchreck == "WSS_2016_13") %>%
+  filter(DateTimeUTC >= Schrecklocation$datum_on [14])%>%
+  filter(DateTimeUTC <= Schrecklocation$datum_off [14])  # delete
 
+Overlap_boar <- rbind(WSS_2016_01, WSS_2016_05, WSS_2016_06, WSS_2016_13)
+Overlap_boar$date <- as.Date(Overlap_boar$DateTimeUTC)
+Overlap_Schreck_boar_after_processing <- ggplot() +
+  geom_line(Overlap_boar, mapping = aes(x = date, y = TierName), colour = "darkgreen") +
+  geom_line(Locations_adapted, mapping = aes(x = dates, y = id), colour = "blue") +
+  theme_bw() +
+  scale_x_date(date_breaks = "6 month") +
+  labs(y = "Animal Names and SchreckID", x = "Time")
 
 # keep working with
 WSS_2014_04
@@ -1336,9 +1392,9 @@ boxplot(Overall$speed~Overall$distance_kat)
 ggplot(Overall, aes(x = distance_kat, y = speed)) +
   geom_boxplot() +
   theme_bw() +
-  stat_compare_means(test="pairwise.wilcox.test", comparisons = Overall$distance_kat, p.adjust.methods = "holm") +
+  stat_compare_means(test="kruskal.test")
+  stat_compare_means(test="pairwise.wilcox.test", comparisons = Overall$distance_kat, p.adjust.methods = "holm", hide.ns = FALSE) +
   labs(y = "Speed", x = "Distance categories" )
-
 
 # Unterschiede Tag Nacht
 # Varianzhomogenität testen
