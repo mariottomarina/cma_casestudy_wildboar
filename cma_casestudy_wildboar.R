@@ -1389,19 +1389,23 @@ pairwise.wilcox.test(Overall$speed, Overall$distance_kat, p.adjust.method = "hol
 
 Overall$distance_kat <- factor(Overall$distance_kat, levels = c("near", "midway", "far"))
 boxplot(Overall$speed~Overall$distance_kat)
-ggplot(Overall, aes(x = distance_kat, y = speed)) +
+
+Overall_dis_cat <- ggplot(Overall, aes(x = distance_kat, y = speed)) +
   geom_boxplot() +
   theme_bw() +
-  stat_compare_means(test="kruskal.test")
-  stat_compare_means(test="pairwise.wilcox.test", comparisons = Overall$distance_kat, p.adjust.methods = "holm", hide.ns = FALSE) +
+  stat_compare_means(test="kruskal.test", label.x = 0.7, label.y = -0.5) +
+  stat_compare_means(test="pairwise.wilcox.test", comparisons = list(c("near", "midway"), c("midway", "far"), c("far", "near")), p.adjust.methods = "holm", hide.ns = FALSE) +
   labs(y = "Speed", x = "Distance categories" )
-
+ggsave("Overall_dist_cat.png", Overall_dis_cat)
 # Unterschiede Tag Nacht
 # Varianzhomogenität testen
 leveneTest(Overall$speed, Overall$daynight) # keine Varianzhomogenität 
 
 # As Normality and Homoscedasticity are not given we use a Kruskal Wallis test. 
 kruskal.test(Overall$speed, Overall$daynight) # Alpha < 0.001
-ggplot(Overall, aes(x = daynight, y = speed)) +
+Overall_daynight <- ggplot(Overall, aes(x = daynight, y = speed))+
   geom_boxplot() +
-  theme_bw()
+  theme_bw() +
+  stat_compare_means(test="kruskal.test", label.x = 0.7, label.y = -0.5) +
+  labs(y = "Speed", x = "Distance categories" )
+ggsave("Overall_daynight.png", Overall_daynight)
