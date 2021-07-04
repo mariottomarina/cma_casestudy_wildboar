@@ -16,6 +16,8 @@ library(purrr)
 library(circle)
 library(ggforce)
 library(car)
+library(ggsignif)
+library(ggpubr)
 
 # Getting the data from the package
 Wildschwein_BE <- wildschwein_BE # Why only data from BE? Should we only focus on the schrecks from there? 
@@ -436,7 +438,7 @@ WSS_2015_03_s <- distance_15_fl %>%
 WSS_2015_03_s <- distinct(WSS_2015_03_s)
 WSS_2015_03_a <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_03"  & DateTimeUTC > Schrecklocation$datum_on [8] & DateTimeUTC < Schrecklocation$datum_off [8])
-WSS_2015_03_s <- distinct(WSS_2015_03_a)
+WSS_2015_03_a <- distinct(WSS_2015_03_a)
 WSS_2015_04 <- distance_15_fl %>%
   filter(IDSchreck == "WSS_2015_04"  & DateTimeUTC > Schrecklocation$datum_on [9] & DateTimeUTC < Schrecklocation$datum_off [10])
 WSS_2015_04 <- distinct(WSS_2015_04)
@@ -1078,4 +1080,272 @@ WSS_2015_03_s_Sabine_pl <- ggplot() +
   theme_bw()
 ggsave("WSS_2015_03_s_Sabine.png", WSS_2015_03_s_Sabine_pl)
 
+# WSS_2015_03_a ####
+WSS_2015_03_a$Schreck.N <- Schrecklocation$N [8]
+WSS_2015_03_a$Schreck.E <- Schrecklocation$E [8]
+WSS_2015_03_a$Schreck.lat <- Schrecklocation$lat[8]
+WSS_2015_03_a$Schreck.lon <- Schrecklocation$lon [8]
+WSS_2015_03_a <- left_join(WSS_2015_03_a, Wildschwein_BE_15, by = c("TierName" = "TierName", "DateTimeUTC" = "DatetimeUTC"))
+WSS_2015_03_a <- left_join(WSS_2015_03_a, Loc_adap_suntimes, by = c("date" = "dates", "IDSchreck" = "id", "Schreck.lat" = "lat", "Schreck.lon" = "lon"))
+WSS_2015_03_a$dusk <- with_tz(WSS_2015_03_a$dusk, "UTC")
+WSS_2015_03_a$dawn <- with_tz(WSS_2015_03_a$dawn, "UTC")
+WSS_2015_03_a$daynight <- ifelse(WSS_2015_03_a$DateTimeUTC > WSS_2015_03_a$dawn & WSS_2015_03_a$DateTimeUTC < WSS_2015_03_a$dusk, "Day", "Night")
+WSS_2015_03_a <- distinct(WSS_2015_03_a)
 
+# Calculating Timelag
+WSS_2015_03_a <-WSS_2015_03_a %>%
+  group_by(TierID) %>%
+  mutate(timelag = as.integer(difftime(lead(DateTimeUTC),DateTimeUTC, units = "secs")))
+WSS_2015_03_a <- WSS_2015_03_a %>%
+  filter(timelag > 0 | timelag < 15000)
+# Calculating steplength 
+WSS_2015_03_a <- WSS_2015_03_a %>%
+  group_by(TierID) %>%
+  mutate(steplength = sqrt((E- lead(E,1))^2 + (N -lead(N,1))^2))
+
+# Calculating speed
+WSS_2015_03_a <- WSS_2015_03_a %>% 
+  group_by(TierID) %>%
+  mutate(speed = (steplength/timelag) * 3.6)
+WSS_2015_03_a$TierName <- as.factor(WSS_2015_03_a$TierName)
+levels(WSS_2015_03_a$TierName)
+
+# Create factors for distance
+WSS_2015_03_a$distance_kat [WSS_2015_03_a$distance <= 500] <- "near" 
+WSS_2015_03_a$distance_kat [WSS_2015_03_a$distance <= 1000 & WSS_2015_03_a$distance > 500] <- "midway"
+WSS_2015_03_a$distance_kat [WSS_2015_03_a$distance > 1000] <- "far"
+WSS_2015_03_a$distance_kat <- as.factor(WSS_2015_03_a$distance_kat)
+
+# Seperating Data Day and night
+WSS_2015_03_a_day <- WSS_2015_03_a %>%
+  filter(daynight == "Day")
+WSS_2015_03_a_night  <- WSS_2015_03_a %>%
+  filter(daynight == "Night")
+
+# Normalverteilung - Normality
+boxplot(WSS_2015_03_a$distance)
+boxplot(WSS_2015_03_a$speed)
+
+# shapiro.test(WSS_2014_04$distance)  --> Shapiro doesn't work because sample size is too big
+ks.test(x = WSS_2015_03_a$distance, y = "pnorm", alternative = "two.sided") # Keine Normalverteilung
+ks.test(x = WSS_2015_03_a$speed, y = "pnorm", alternative = "two.sided") # Keine Normalverteilung
+
+# Varianzhomogenität testen
+leveneTest(WSS_2015_03_a$speed, WSS_2015_03_a$distance_kat) # keine Varianzhomogenität 
+
+# As Normality and Homoscedasticity are not given we use a Kruskal Wallis test. 
+kruskal.test(WSS_2015_03_a$speed, WSS_2015_03_a$distance_kat) # Alpha < 0.001
+pairwise.wilcox.test(WSS_2015_03_a$speed, WSS_2015_03_a$distance_kat, p.adjust.method = "holm")
+
+#        far     midway 
+# midway 0.0028  -      
+# near   < 2e-16 8.3e-12
+
+
+# Filtering for individuals to plot the data
+WSS_2015_03_a_Caroline <- WSS_2015_03_a_night %>%
+  filter(TierName == "Caroline")
+WSS_2015_03_a_Olga <- WSS_2015_03_a_night %>%
+  filter(TierName == "Olga")
+WSS_2015_03_a_Ruth <- WSS_2015_03_a_night %>%
+  filter(TierName == "Ruth")
+WSS_2015_03_a_Sabine <- WSS_2015_03_a_night %>%
+  filter(TierName == "Sabine")
+
+# Creating Plot of every individual
+
+WSS_2015_03_a_Ruth_pl <- ggplot() +
+  geom_point(data = WSS_2015_03_a_Ruth, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_03_a_Ruth$Schreck.E, y0 = WSS_2015_03_a_Ruth$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_03_a_Ruth$Schreck.E, y0 = WSS_2015_03_a_Ruth$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_03_a_Ruth$Schreck.E, y0 = WSS_2015_03_a_Ruth$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_01_a_Ruth, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2015_03_a_Ruth, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2015_03_a_Ruth.png", WSS_2015_03_a_Ruth_pl)
+
+WSS_2015_03_a_Sabine_pl <- ggplot() +
+  geom_point(data = WSS_2015_03_a_Sabine, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_03_a_Sabine$Schreck.E, y0 = WSS_2015_03_a_Sabine$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_03_a_Sabine$Schreck.E, y0 = WSS_2015_03_a_Sabine$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_03_a_Sabine$Schreck.E, y0 = WSS_2015_03_a_Sabine$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_03_a_Sabine, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2015_03_a_Sabine, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2015_03_a_Sabine.png", WSS_2015_03_a_Sabine_pl)
+
+WSS_2015_03_a_Caroline_pl <- ggplot() +
+  geom_point(data = WSS_2015_03_a_Caroline, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_03_a_Caroline$Schreck.E, y0 = WSS_2015_03_a_Caroline$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_03_a_Caroline$Schreck.E, y0 = WSS_2015_03_a_Caroline$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_03_a_Caroline$Schreck.E, y0 = WSS_2015_03_a_Caroline$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_01_a_Caroline, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2015_03_a_Caroline, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2015_03_a_Caroline.png", WSS_2015_03_a_Caroline_pl)
+
+WSS_2015_03_a_Olga_pl <- ggplot() +
+  geom_point(data = WSS_2015_03_a_Olga, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_03_a_Olga$Schreck.E, y0 = WSS_2015_03_a_Olga$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_03_a_Olga$Schreck.E, y0 = WSS_2015_03_a_Olga$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_03_a_Olga$Schreck.E, y0 = WSS_2015_03_a_Olga$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_03_a_Olga, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2015_03_a_Olga, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2015_03_a_Olga.png", WSS_2015_03_a_Olga_pl)
+
+# WSS_2015_04 ####
+WSS_2015_04$Schreck.N <- Schrecklocation$N [9]
+WSS_2015_04$Schreck.E <- Schrecklocation$E [9]
+WSS_2015_04$Schreck.lat <- Schrecklocation$lat[9]
+WSS_2015_04$Schreck.lon <- Schrecklocation$lon [9]
+WSS_2015_04 <- left_join(WSS_2015_04, Wildschwein_BE_15, by = c("TierName" = "TierName", "DateTimeUTC" = "DatetimeUTC"))
+WSS_2015_04 <- left_join(WSS_2015_04, Loc_adap_suntimes, by = c("date" = "dates", "IDSchreck" = "id", "Schreck.lat" = "lat", "Schreck.lon" = "lon"))
+WSS_2015_04$dusk <- with_tz(WSS_2015_04$dusk, "UTC")
+WSS_2015_04$dawn <- with_tz(WSS_2015_04$dawn, "UTC")
+WSS_2015_04$daynight <- ifelse(WSS_2015_04$DateTimeUTC > WSS_2015_04$dawn & WSS_2015_04$DateTimeUTC < WSS_2015_04$dusk, "Day", "Night")
+WSS_2015_04 <- distinct(WSS_2015_04)
+
+# Calculating Timelag
+WSS_2015_04 <-WSS_2015_04 %>%
+  group_by(TierID) %>%
+  mutate(timelag = as.integer(difftime(lead(DateTimeUTC),DateTimeUTC, units = "secs")))
+WSS_2015_04 <- WSS_2015_04 %>%
+  filter(timelag > 0 | timelag < 15000)
+# Calculating steplength 
+WSS_2015_04 <- WSS_2015_04 %>%
+  group_by(TierID) %>%
+  mutate(steplength = sqrt((E- lead(E,1))^2 + (N -lead(N,1))^2))
+
+# Calculating speed
+WSS_2015_04 <- WSS_2015_04 %>% 
+  group_by(TierID) %>%
+  mutate(speed = (steplength/timelag) * 3.6)
+WSS_2015_04$TierName <- as.factor(WSS_2015_04$TierName)
+levels(WSS_2015_04$TierName)
+
+# Create factors for distance
+WSS_2015_04$distance_kat [WSS_2015_04$distance <= 500] <- "near" 
+WSS_2015_04$distance_kat [WSS_2015_04$distance <= 1000 & WSS_2015_04$distance > 500] <- "midway"
+WSS_2015_04$distance_kat [WSS_2015_04$distance > 1000] <- "far"
+WSS_2015_04$distance_kat <- as.factor(WSS_2015_04$distance_kat)
+
+# Seperating Data Day and night
+WSS_2015_04_day <- WSS_2015_04 %>%
+  filter(daynight == "Day")
+WSS_2015_04_night  <- WSS_2015_04 %>%
+  filter(daynight == "Night")
+
+# Normalverteilung - Normality
+boxplot(WSS_2015_04$distance)
+boxplot(WSS_2015_04$speed)
+
+# shapiro.test(WSS_2014_04$distance)  --> Shapiro doesn't work because sample size is too big
+ks.test(x = WSS_2015_04$distance, y = "pnorm", alternative = "two.sided") # Keine Normalverteilung
+ks.test(x = WSS_2015_04$speed, y = "pnorm", alternative = "two.sided") # Keine Normalverteilung
+
+# Varianzhomogenität testen
+leveneTest(WSS_2015_04$speed, WSS_2015_04$distance_kat) # keine Varianzhomogenität 
+
+# As Normality and Homoscedasticity are not given we use a Kruskal Wallis test. 
+kruskal.test(WSS_2015_04$speed, WSS_2015_04$distance_kat) # Alpha < 0.001
+pairwise.wilcox.test(WSS_2015_04$speed, WSS_2015_04$distance_kat, p.adjust.method = "holm")
+
+#        far     midway 
+# midway 1.9e-07 -      
+# near   4.9e-11 0.00084
+
+# Filtering for individuals to plot the data
+WSS_2015_04_Caroline <- WSS_2015_04_night %>%
+  filter(TierName == "Caroline")
+WSS_2015_04_Olga <- WSS_2015_04_night %>%
+  filter(TierName == "Olga")
+WSS_2015_04_Ruth <- WSS_2015_04_night %>%
+  filter(TierName == "Ruth")
+WSS_2015_04_Sabine <- WSS_2015_04_night %>%
+  filter(TierName == "Sabine")
+
+# Creating Plot of every individual
+
+WSS_2015_04_Ruth_pl <- ggplot() +
+  geom_point(data = WSS_2015_04_Ruth, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_04_Ruth$Schreck.E, y0 = WSS_2015_04_Ruth$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_04_Ruth$Schreck.E, y0 = WSS_2015_04_Ruth$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_04_Ruth$Schreck.E, y0 = WSS_2015_04_Ruth$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_04_Ruth, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2015_04_Ruth, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2015_04_Ruth.png", WSS_2015_04_Ruth_pl)
+
+WSS_2015_04_Sabine_pl <- ggplot() +
+  geom_point(data = WSS_2015_04_Sabine, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_04_Sabine$Schreck.E, y0 = WSS_2015_04_Sabine$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_04_Sabine$Schreck.E, y0 = WSS_2015_04_Sabine$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_04_Sabine$Schreck.E, y0 = WSS_2015_04_Sabine$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_04_Sabine, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2015_04_Sabine, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2015_04_Sabine.png", WSS_2015_04_Sabine_pl)
+
+WSS_2015_04_Caroline_pl <- ggplot() +
+  geom_point(data = WSS_2015_04_Caroline, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_04_Caroline$Schreck.E, y0 = WSS_2015_04_Caroline$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_04_Caroline$Schreck.E, y0 = WSS_2015_04_Caroline$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_04_Caroline$Schreck.E, y0 = WSS_2015_04_Caroline$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_04_Caroline, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2015_04_Caroline, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2015_04_Caroline.png", WSS_2015_04_Caroline_pl)
+
+WSS_2015_04_Olga_pl <- ggplot() +
+  geom_point(data = WSS_2015_04_Olga, aes(x= E, y=N)) +
+  geom_circle(aes(x0 = WSS_2015_04_Olga$Schreck.E, y0 = WSS_2015_04_Olga$Schreck.N, r = 1500), colour = "deepskyblue4") +
+  geom_circle(aes(x0 = WSS_2015_04_Olga$Schreck.E, y0 = WSS_2015_04_Olga$Schreck.N, r = 1000), colour = "deepskyblue2") +
+  geom_circle(aes(x0 = WSS_2015_04_Olga$Schreck.E, y0 = WSS_2015_04_Olga$Schreck.N, r = 500), colour = "deepskyblue")  +
+  geom_path(data = WSS_2015_04_Olga, aes(x=E, y=N, colour = speed)) +
+  scale_colour_gradientn(colours = terrain.colors(6), limits = c(0, 5), breaks = c(0,1,2,3,4,5)) +
+  geom_point(data = WSS_2015_04_Olga, aes(x=Schreck.E, y=Schreck.N), colour = "blue") +
+  theme_bw()
+ggsave("WSS_2015_04_Olga.png", WSS_2015_04_Olga_pl)
+
+
+# Overall ####
+Overall <- rbind(WSS_2014_04, WSS_2014_05, WSS_2015_01_s, WSS_2015_01_a, WSS_2015_03_s, WSS_2015_03_a, WSS_2015_04)
+
+# shapiro.test(WSS_2014_04$distance)  --> Shapiro doesn't work because sample size is too big
+ks.test(x = Overall$distance, y = "pnorm", alternative = "two.sided") # Keine Normalverteilung
+ks.test(x = Overall$speed, y = "pnorm", alternative = "two.sided") # Keine Normalverteilung
+
+# Varianzhomogenität testen
+leveneTest(Overall$speed, Overall$distance_kat) # keine Varianzhomogenität 
+
+# As Normality and Homoscedasticity are not given we use a Kruskal Wallis test. 
+kruskal.test(Overall$speed, Overall$distance_kat) # Alpha < 0.001
+pairwise.wilcox.test(Overall$speed, Overall$distance_kat, p.adjust.method = "holm")
+
+
+Overall$distance_kat <- factor(Overall$distance_kat, levels = c("near", "midway", "far"))
+boxplot(Overall$speed~Overall$distance_kat)
+ggplot(Overall, aes(x = distance_kat, y = speed)) +
+  geom_boxplot() +
+  theme_bw() +
+  stat_compare_means(test="pairwise.wilcox.test", comparisons = Overall$distance_kat, p.adjust.methods = "holm") +
+  labs(y = "Speed", x = "Distance categories" )
+
+
+# Unterschiede Tag Nacht
+# Varianzhomogenität testen
+leveneTest(Overall$speed, Overall$daynight) # keine Varianzhomogenität 
+
+# As Normality and Homoscedasticity are not given we use a Kruskal Wallis test. 
+kruskal.test(Overall$speed, Overall$daynight) # Alpha < 0.001
+ggplot(Overall, aes(x = daynight, y = speed)) +
+  geom_boxplot() +
+  theme_bw()
